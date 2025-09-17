@@ -30,7 +30,7 @@ public class UserManagementController {
     public void addApis(@PathVariable int id, @RequestBody Integer api_id) { /* TODO implement correctly */ }
 
     @DeleteMapping("/users/{id}/apis/{api_id}")
-    public void addApi(@PathVariable int id, @PathVariable int api_id) { /* TODO implement correctly */ }
+    public void deleteApi(@PathVariable int id, @PathVariable int api_id) { /* TODO implement correctly */ }
 
     @GetMapping("/users/{id}/groups")
     public List<Group> getGroups(@PathVariable int id) { /* TODO implement correctly */ return null; }

@@ -23,11 +23,19 @@ public interface UserService {
     List<User> fetchUserList();
 
     /**
-     * Returns the saved User data of the User with the given ID.
+     * Returns the saved User data of the User with the given username.
      * @param userName Unique identifier of the user data.
-     * @return User object if successful, null if no user with this ID is saved.
+     * @return User object if successful, null if no user with this username is saved.
      */
     User findUserByUserName(String userName);
+
+    /**
+     * Updates the user data of the user identified by the given username with the data given in the user parameter.
+     * @param user Object representation of the data which shall be saved.
+     * @param userName Unique identifier of the user data.
+     * @return User object if successful, null if failed.
+     */
+    User updateUser(User user, String userName);
 
     /**
      * Deletes the saved User data of the User with the given ID.
@@ -38,9 +46,10 @@ public interface UserService {
     /**
      * Saves the given API ID to the User data which grants the User access to the corresponding tool.
      * @param userName Unique identifier of the user data.
-     * @param api_id Unique identifier of an API.
+     * @param apiId Unique identifier of an API.
+     * @return Api ID if successful, null if failed.
      */
-    void addApiToUser(String userName, int api_id);
+    Integer addApiToUser(String userName, Integer apiId);
 
     /**
      * Returns a list of all API IDs of which grants the user access to the corresponding tools.
@@ -52,9 +61,9 @@ public interface UserService {
     /**
      * Deletes an API ID from a user so that the user no longer has access to the corresponding tool.
      * @param userName Unique identifier of the user data.
-     * @param api_id Unique identifier of an API.
+     * @param apiId Unique identifier of an API.
      */
-    void deleteApiIdFromUser(String userName, int api_id);
+    void deleteApiIdFromUser(String userName, Integer apiId);
 
     /**
      * Returns a list of groups which the user is part of and also his corresponding role within the groups.

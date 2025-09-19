@@ -1,9 +1,12 @@
 package thm.gromokoso.usermanagement.service;
 
 import thm.gromokoso.usermanagement.entity.User;
+import thm.gromokoso.usermanagement.entity.UserToApi;
+import thm.gromokoso.usermanagement.entity.UserToGroup;
 import thm.gromokoso.usermanagement.model.GroupWithGroupRole;
 import thm.gromokoso.usermanagement.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
@@ -24,7 +27,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByUserName(String userName) {
-        return userRepository.findById(userName).orElse(null);
+        return userRepository.findById(userName).orElseThrow();
+    }
+
+    @Override
+    public User updateUser(User user, String userName) {
+        User dbUser = findUserByUserName(userName);
+        dbUser.setUserName(userName);
+        dbUser.setFirstName(user.getFirstName());
+        dbUser.setLastName(user.getLastName());
+        dbUser.setEmail(user.getEmail());
+        dbUser.setApiAccesses(user.getApiAccesses());
+        dbUser.setGroupMappings(user.getGroupMappings());
+        dbUser.setSystemRole(user.getSystemRole());
+        return userRepository.save(dbUser);
     }
 
     @Override
@@ -33,24 +49,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addApiToUser(String userName, int api_id) {
-        /* TODO implement when repo is function is available */
+    public Integer addApiToUser(String userName, Integer apiId) {
+        User dbUser = findUserByUserName(userName);
+        List<UserToApi> userToApiList = dbUser.getApiAccesses();
+        userToApiList.add(new UserToApi(apiId, dbUser, true));
+        dbUser.setApiAccesses(userToApiList);
+        userRepository.save(dbUser);
+        return apiId;
     }
 
     @Override
     public List<Integer> fetchApiListFromUser(String userName) {
-        /* TODO implement when repo is function is available */
-        return List.of();
+        List<Integer> apiIdList = new ArrayList<>();
+        User dbUser = findUserByUserName(userName);
+        List<UserToApi> apiAccesses = dbUser.getApiAccesses();
+        for (UserToApi userToApi : apiAccesses) {
+            apiIdList.add(userToApi.getApiId());
+        }
+        return apiIdList;
     }
 
     @Override
-    public void deleteApiIdFromUser(String userName, int api_id) {
-        /* TODO implement when repo is function is available */
+    public void deleteApiIdFromUser(String userName, Integer apiId) {
+        User dbUser = findUserByUserName(userName);
+        List<UserToApi> apiAccesses = dbUser.getApiAccesses();
+        apiAccesses.stream().filter(
+                        userToApi -> userToApi.getApiId().equals(apiId))
+                .findFirst().ifPresent(apiAccesses::remove);
     }
 
     @Override
     public List<GroupWithGroupRole> fetchGroupListFromUser(String userName) {
-        /* TODO implement when repo is function is available */
-        return List.of();
+        List<GroupWithGroupRole> groupWithGroupRoleList = new ArrayList<>();
+        User dbUser = findUserByUserName(userName);
+        List<UserToGroup> userToGroupList = dbUser.getGroupMappings();
+        for (UserToGroup userToGroup : userToGroupList) {
+            groupWithGroupRoleList.add(new GroupWithGroupRole(userToGroup.getGroup(), userToGroup.getGroupRole()));
+        }
+        return groupWithGroupRoleList;
     }
 }

@@ -1,37 +1,43 @@
 package thm.gromokoso.usermanagement.controller;
 
 import org.springframework.web.bind.annotation.*;
-import thm.gromokoso.usermanagement.entity.Group;
 import thm.gromokoso.usermanagement.entity.User;
+import thm.gromokoso.usermanagement.model.GroupWithGroupRole;
+import thm.gromokoso.usermanagement.service.UserService;
 
 import java.util.List;
 
+@RestController
 public class UserManagementController {
 
+    private final UserService userService;
+
+    public UserManagementController(UserService userService) { this.userService = userService; }
+
     @GetMapping("/users")
-    public User getUsers() { /* TODO implement correctly */ return null; }
+    public List<User> getUsers() { /* TODO implement correctly */ return null; }
 
     @PostMapping("/users")
-    public void addUser(@RequestBody User user) { /* TODO implement correctly */ }
+    public User addUser(@RequestBody User user) { /* TODO implement correctly */ return null; }
 
-    @GetMapping("/users/{id}")
-    public User getUser(@PathVariable int id) { /* TODO implement correctly */ return null; }
+    @GetMapping("/users/{username}")
+    public User getUser(@PathVariable String username) { /* TODO implement correctly */ return null; }
 
-    @PutMapping("/users/{id}")
-    public void updateUser(@PathVariable int id, @RequestBody User user) { /* TODO implement correctly */ }
+    @PutMapping("/users/{username}")
+    public User updateUser(@PathVariable String username, @RequestBody User user) { /* TODO implement correctly */ return null; }
 
-    @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable int id) { /* TODO implement correctly */ }
+    @DeleteMapping("/users/{username}")
+    public void deleteUser(@PathVariable String username) { /* TODO implement correctly */ }
 
-    @GetMapping("/users/{id}/apis")
-    public List<Integer> getApis(@PathVariable int id) { /* TODO implement correctly */ return null; }
+    @GetMapping("/users/{username}/apis")
+    public List<Integer> getApis(@PathVariable String username) { /* TODO implement correctly */ return null; }
 
-    @PostMapping("/users/{id}/apis")
-    public void addApis(@PathVariable int id, @RequestBody Integer api_id) { /* TODO implement correctly */ }
+    @PostMapping("/users/{username}/apis")
+    public Integer addApis(@PathVariable String username, @RequestBody Integer api_id) { /* TODO implement correctly */ return null; }
 
-    @DeleteMapping("/users/{id}/apis/{api_id}")
-    public void deleteApi(@PathVariable int id, @PathVariable int api_id) { /* TODO implement correctly */ }
+    @DeleteMapping("/users/{username}/apis/{api_id}")
+    public void deleteApi(@PathVariable String username, @PathVariable Integer api_id) { /* TODO implement correctly */ }
 
-    @GetMapping("/users/{id}/groups")
-    public List<Group> getGroups(@PathVariable int id) { /* TODO implement correctly */ return null; }
+    @GetMapping("/users/{username}/groups")
+    public List<GroupWithGroupRole> getGroups(@PathVariable String username) { /* TODO implement correctly */ return null; }
 }

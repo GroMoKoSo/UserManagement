@@ -13,6 +13,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name="groups")   // other name because GROUP is a SQL keyword
 public class Group {
     @Id
     private String groupName;

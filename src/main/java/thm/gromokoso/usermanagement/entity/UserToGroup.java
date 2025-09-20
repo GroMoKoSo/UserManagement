@@ -16,11 +16,11 @@ public class UserToGroup {
     private UserToGroupId id;
 
     @ManyToOne
-    @MapsId("userId")
+    @MapsId("userName")
     private User user;
 
     @ManyToOne
-    @MapsId("groupId")
+    @MapsId("groupName")
     private Group group;
 
     @Enumerated(EnumType.STRING)

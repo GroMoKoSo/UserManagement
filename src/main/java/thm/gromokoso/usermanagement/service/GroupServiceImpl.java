@@ -24,7 +24,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public GroupDto saveGroup(GroupDto group) {
-        Group dbGroup = new Group(group.name(), group.description(), new ArrayList<>(), new ArrayList<>(), group.groupType());
+        Group dbGroup = new Group(group.name(), group.description(), new ArrayList<>(), new ArrayList<>(), group.visibility());
         groupRepository.save(dbGroup);
         return group;
     }
@@ -48,7 +48,7 @@ public class GroupServiceImpl implements GroupService {
         Group dbGroup = groupRepository.findById(name).orElseThrow();
         dbGroup.setGroupName(group.name());
         dbGroup.setDescription(group.description());
-        dbGroup.setType(group.groupType());
+        dbGroup.setType(group.visibility());
         groupRepository.save(dbGroup);
         return convertGroupToGroupDto(dbGroup);
     }

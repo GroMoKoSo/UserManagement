@@ -1,7 +1,7 @@
 package thm.gromokoso.usermanagement.controller;
 
 import org.springframework.web.bind.annotation.*;
-import thm.gromokoso.usermanagement.entity.User;
+import thm.gromokoso.usermanagement.model.UserDto;
 import thm.gromokoso.usermanagement.model.GroupWithGroupRole;
 import thm.gromokoso.usermanagement.service.UserService;
 
@@ -15,16 +15,16 @@ public class UserManagementController {
     public UserManagementController(UserService userService) { this.userService = userService; }
 
     @GetMapping("/users")
-    public List<User> getUsers() { return userService.fetchUserList(); }
+    public List<UserDto> getUsers() { return userService.fetchUserList(); }
 
     @PostMapping("/users")
-    public User addUser(@RequestBody User user) { return userService.saveUser(user); }
+    public UserDto addUser(@RequestBody UserDto user) { return userService.saveUser(user); }
 
     @GetMapping("/users/{username}")
-    public User getUser(@PathVariable String username) { return userService.findUserByUserName(username); }
+    public UserDto getUser(@PathVariable String username) { return userService.findUserByUserName(username); }
 
     @PutMapping("/users/{username}")
-    public User updateUser(@PathVariable String username, @RequestBody User user) { return userService.updateUser(user, username); }
+    public UserDto updateUser(@PathVariable String username, @RequestBody UserDto user) { return userService.updateUser(user, username); }
 
     @DeleteMapping("/users/{username}")
     public void deleteUser(@PathVariable String username) { userService.deleteUserByUserName(username); }

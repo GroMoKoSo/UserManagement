@@ -1,6 +1,7 @@
 package thm.gromokoso.usermanagement.service;
 
 import org.springframework.stereotype.Service;
+import thm.gromokoso.usermanagement.model.UserDto;
 import thm.gromokoso.usermanagement.entity.User;
 import thm.gromokoso.usermanagement.entity.UserToApi;
 import thm.gromokoso.usermanagement.entity.UserToGroup;
@@ -18,31 +19,37 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository) { this.userRepository = userRepository; }
 
     @Override
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public UserDto saveUser(UserDto user) {
+        User dbUser = new User(user.userName(), user.firstName(), user.lastName(), user.email(), new ArrayList<>(), new ArrayList<>(), user.systemRole());
+        userRepository.save(dbUser);
+        return convertUserToUserDto(dbUser);
     }
 
     @Override
-    public List<User> fetchUserList() {
-        return userRepository.findAll();
+    public List<UserDto> fetchUserList() {
+        List<UserDto> userDtos = new ArrayList<>();
+        for (User user : userRepository.findAll()) {
+            userDtos.add(new UserDto(user.getUserName(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getSystemRole()));
+        }
+        return userDtos;
     }
 
     @Override
-    public User findUserByUserName(String username) {
-        return userRepository.findById(username).orElseThrow();
+    public UserDto findUserByUserName(String username) {
+        User user = userRepository.findById(username).orElseThrow();
+        return convertUserToUserDto(user);
     }
 
     @Override
-    public User updateUser(User user, String username) {
-        User dbUser = findUserByUserName(username);
-        dbUser.setUserName(username);
-        dbUser.setFirstName(user.getFirstName());
-        dbUser.setLastName(user.getLastName());
-        dbUser.setEmail(user.getEmail());
-        dbUser.setApiAccesses(user.getApiAccesses());
-        dbUser.setGroupMappings(user.getGroupMappings());
-        dbUser.setSystemRole(user.getSystemRole());
-        return userRepository.save(dbUser);
+    public UserDto updateUser(UserDto user, String username) {
+        User dbUser = userRepository.findById(username).orElseThrow();
+        dbUser.setUserName(user.userName());
+        dbUser.setFirstName(user.firstName());
+        dbUser.setLastName(user.lastName());
+        dbUser.setEmail(user.email());
+        dbUser.setSystemRole(user.systemRole());
+        userRepository.save(dbUser);
+        return convertUserToUserDto(dbUser);
     }
 
     @Override
@@ -52,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer addApiToUser(String username, Integer apiId) {
-        User dbUser = findUserByUserName(username);
+        User dbUser = userRepository.findById(username).orElseThrow();
         List<UserToApi> userToApiList = dbUser.getApiAccesses();
         userToApiList.add(new UserToApi(apiId, dbUser, true));
         dbUser.setApiAccesses(userToApiList);
@@ -63,7 +70,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Integer> fetchApiListFromUser(String username) {
         List<Integer> apiIdList = new ArrayList<>();
-        User dbUser = findUserByUserName(username);
+        User dbUser = userRepository.findById(username).orElseThrow();
         List<UserToApi> apiAccesses = dbUser.getApiAccesses();
         for (UserToApi userToApi : apiAccesses) {
             apiIdList.add(userToApi.getApiId());
@@ -73,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteApiIdFromUser(String username, Integer apiId) {
-        User dbUser = findUserByUserName(username);
+        User dbUser = userRepository.findById(username).orElseThrow();
         List<UserToApi> apiAccesses = dbUser.getApiAccesses();
         apiAccesses.stream().filter(
                         userToApi -> userToApi.getApiId().equals(apiId))
@@ -83,11 +90,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<GroupWithGroupRole> fetchGroupListFromUser(String username) {
         List<GroupWithGroupRole> groupWithGroupRoleList = new ArrayList<>();
-        User dbUser = findUserByUserName(username);
+        User dbUser = userRepository.findById(username).orElseThrow();
         List<UserToGroup> userToGroupList = dbUser.getGroupMappings();
         for (UserToGroup userToGroup : userToGroupList) {
             groupWithGroupRoleList.add(new GroupWithGroupRole(userToGroup.getGroup(), userToGroup.getGroupRole()));
         }
         return groupWithGroupRoleList;
+    }
+
+    private UserDto convertUserToUserDto(User user) {
+        return new UserDto(user.getUserName(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getSystemRole());
     }
 }

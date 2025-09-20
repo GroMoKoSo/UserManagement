@@ -1,7 +1,7 @@
 package thm.gromokoso.usermanagement.service;
 
 import org.springframework.stereotype.Service;
-import thm.gromokoso.usermanagement.entity.User;
+import thm.gromokoso.usermanagement.model.UserDto;
 import thm.gromokoso.usermanagement.model.GroupWithGroupRole;
 
 import java.util.List;
@@ -14,20 +14,20 @@ public interface UserService {
      * @param user Object representation of the data which shall be saved.
      * @return User object if successful, null if failed.
      */
-    User saveUser(User user);
+    UserDto saveUser(UserDto user);
 
     /**
      * Returns all saved User data within the user management.
      * @return List of all saved Users.
      */
-    List<User> fetchUserList();
+    List<UserDto> fetchUserList();
 
     /**
      * Returns the saved User data of the User with the given username.
      * @param username Unique identifier of the user data.
      * @return User object if successful, null if no user with this username is saved.
      */
-    User findUserByUserName(String username);
+    UserDto findUserByUserName(String username);
 
     /**
      * Updates the user data of the user identified by the given username with the data given in the user parameter.
@@ -35,7 +35,7 @@ public interface UserService {
      * @param username Unique identifier of the user data.
      * @return User object if successful, null if failed.
      */
-    User updateUser(User user, String username);
+    UserDto updateUser(UserDto user, String username);
 
     /**
      * Deletes the saved User data of the User with the given ID.

@@ -17,36 +17,36 @@ public class GroupManagementController {
     GroupManagementController(GroupService groupService) { this.groupService = groupService; }
 
     @GetMapping("/groups")
-    public Group getGroups() { /* TODO implement correctly */ return null; }
+    public List<Group> getGroups() { return groupService.fetchGroupList(); }
 
     @PostMapping("/groups")
-    public Group addGroup(@RequestBody Group group) { /* TODO implement correctly */ return null; }
+    public Group addGroup(@RequestBody Group group) { return groupService.saveGroup(group); }
 
     @GetMapping("/groups/{name}")
-    public Group getGroup(@PathVariable String name) { /* TODO implement correctly */ return null; }
+    public Group getGroup(@PathVariable String name) { return groupService.getGroupByGroupName(name); }
 
     @PutMapping("/groups/{name}")
-    public void updateGroup(@PathVariable String name, @RequestBody Group group) { /* TODO implement correctly */ }
+    public Group updateGroup(@PathVariable String name, @RequestBody Group group) { return groupService.updateGroupByGroupName(group, name); }
 
     @DeleteMapping("/groups/{name}")
-    public void deleteGroup(@PathVariable String name) { /* TODO implement correctly */ }
+    public void deleteGroup(@PathVariable String name) { groupService.deleteGroupByGroupName(name); }
 
     @GetMapping("/groups/{name}/apis")
-    public List<Integer> getApiIdsOfGroup(@PathVariable String name) { /* TODO implement correctly */ return null; }
+    public List<Integer> getApiIdsOfGroup(@PathVariable String name) { return groupService.fetchApiIdListFromGroup(name); }
 
     @PostMapping("/groups/{name}/apis")
-    public Integer addApiIdToGroup(@PathVariable String name, @RequestBody Integer api_id) { /* TODO implement correctly */ return null; }
+    public Integer addApiIdToGroup(@PathVariable String name, @RequestBody Integer api_id) { return groupService.addApiIdToGroup(name, api_id); }
 
     @DeleteMapping("/groups/{name}/apis/{api_id}")
-    public void deleteApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id) { /* TODO implement correctly */ }
+    public void deleteApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id) { groupService.deleteApiIdFromGroup(name, api_id); }
 
     @GetMapping("/groups/{name}/users")
-    public List<UserWithGroupRole> getUsersOfGroup(@PathVariable String name) { /* TODO implement correctly */ return null; }
-
-    @PostMapping("/groups/{name}/users")
-    public User addUserToGroup(@PathVariable String name, @RequestBody User user) { /* TODO implement correctly */ return null;}
+    public List<UserWithGroupRole> getUsersOfGroup(@PathVariable String name) { return groupService.fetchUserListFromGroup(name); }
 
     // TODO add Query Parameter for Group Role
-    @DeleteMapping("/groups/{name}/users/{user_name}")
-    public void deleteUserFromGroup(@PathVariable String name, @PathVariable String user_name) { /* TODO implement correctly */ }
+    @PostMapping("/groups/{name}/users")
+    public User addUserToGroup(@PathVariable String name, @RequestBody User user) { return groupService.addUserToGroupList(name, user); }
+
+    @DeleteMapping("/groups/{name}/users/{username}")
+    public void deleteUserFromGroup(@PathVariable String name, @PathVariable String username) { groupService.deleteUserFromGroup(name, username); }
 }

@@ -26,14 +26,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserByUserName(String userName) {
-        return userRepository.findById(userName).orElseThrow();
+    public User findUserByUserName(String username) {
+        return userRepository.findById(username).orElseThrow();
     }
 
     @Override
-    public User updateUser(User user, String userName) {
-        User dbUser = findUserByUserName(userName);
-        dbUser.setUserName(userName);
+    public User updateUser(User user, String username) {
+        User dbUser = findUserByUserName(username);
+        dbUser.setUserName(username);
         dbUser.setFirstName(user.getFirstName());
         dbUser.setLastName(user.getLastName());
         dbUser.setEmail(user.getEmail());
@@ -44,13 +44,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserByUserName(String userName) {
-        userRepository.deleteById(userName);
+    public void deleteUserByUserName(String username) {
+        userRepository.deleteById(username);
     }
 
     @Override
-    public Integer addApiToUser(String userName, Integer apiId) {
-        User dbUser = findUserByUserName(userName);
+    public Integer addApiToUser(String username, Integer apiId) {
+        User dbUser = findUserByUserName(username);
         List<UserToApi> userToApiList = dbUser.getApiAccesses();
         userToApiList.add(new UserToApi(apiId, dbUser, true));
         dbUser.setApiAccesses(userToApiList);
@@ -59,9 +59,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Integer> fetchApiListFromUser(String userName) {
+    public List<Integer> fetchApiListFromUser(String username) {
         List<Integer> apiIdList = new ArrayList<>();
-        User dbUser = findUserByUserName(userName);
+        User dbUser = findUserByUserName(username);
         List<UserToApi> apiAccesses = dbUser.getApiAccesses();
         for (UserToApi userToApi : apiAccesses) {
             apiIdList.add(userToApi.getApiId());
@@ -70,8 +70,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteApiIdFromUser(String userName, Integer apiId) {
-        User dbUser = findUserByUserName(userName);
+    public void deleteApiIdFromUser(String username, Integer apiId) {
+        User dbUser = findUserByUserName(username);
         List<UserToApi> apiAccesses = dbUser.getApiAccesses();
         apiAccesses.stream().filter(
                         userToApi -> userToApi.getApiId().equals(apiId))
@@ -79,9 +79,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<GroupWithGroupRole> fetchGroupListFromUser(String userName) {
+    public List<GroupWithGroupRole> fetchGroupListFromUser(String username) {
         List<GroupWithGroupRole> groupWithGroupRoleList = new ArrayList<>();
-        User dbUser = findUserByUserName(userName);
+        User dbUser = findUserByUserName(username);
         List<UserToGroup> userToGroupList = dbUser.getGroupMappings();
         for (UserToGroup userToGroup : userToGroupList) {
             groupWithGroupRoleList.add(new GroupWithGroupRole(userToGroup.getGroup(), userToGroup.getGroupRole()));

@@ -61,9 +61,9 @@ public interface GroupService {
     /**
      * Deletes a User from a group so that he is no longer a members and no longer has access to the corresponding tool.
      * @param name Unique identifier of the group data.
-     * @param user object representation of the user which should be deleted.
+     * @param username Unique identifier of the user data.
      */
-    void deleteUserFromGroup(String name, User user);
+    void deleteUserFromGroup(String name, String username);
 
     /**
      * Saves the given API ID to the Group data which grants the Group and it's members access to the corresponding tool.

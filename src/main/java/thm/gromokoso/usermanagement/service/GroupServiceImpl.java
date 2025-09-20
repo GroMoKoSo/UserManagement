@@ -70,11 +70,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void deleteUserFromGroup(String name, User user) {
+    public void deleteUserFromGroup(String name, String username) {
         Group dbGroup = getGroupByGroupName(name);
         List<UserToGroup> userToGroupList = dbGroup.getUserMappings();
         userToGroupList.stream().filter(
-                userToGroup -> userToGroup.getUser().equals(user) &&
+                userToGroup -> userToGroup.getUser().getUserName().equals(username) &&
                         userToGroup.getGroup().equals(dbGroup))
                 .findFirst().ifPresent(userToGroupList::remove);
     }

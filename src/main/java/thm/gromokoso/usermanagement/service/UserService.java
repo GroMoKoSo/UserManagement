@@ -24,51 +24,51 @@ public interface UserService {
 
     /**
      * Returns the saved User data of the User with the given username.
-     * @param userName Unique identifier of the user data.
+     * @param username Unique identifier of the user data.
      * @return User object if successful, null if no user with this username is saved.
      */
-    User findUserByUserName(String userName);
+    User findUserByUserName(String username);
 
     /**
      * Updates the user data of the user identified by the given username with the data given in the user parameter.
      * @param user Object representation of the data which shall be saved.
-     * @param userName Unique identifier of the user data.
+     * @param username Unique identifier of the user data.
      * @return User object if successful, null if failed.
      */
-    User updateUser(User user, String userName);
+    User updateUser(User user, String username);
 
     /**
      * Deletes the saved User data of the User with the given ID.
-     * @param userName Unique identifier of the user data.
+     * @param username Unique identifier of the user data.
      */
-    void deleteUserByUserName(String userName);
+    void deleteUserByUserName(String username);
 
     /**
      * Saves the given API ID to the User data which grants the User access to the corresponding tool.
-     * @param userName Unique identifier of the user data.
+     * @param username Unique identifier of the user data.
      * @param apiId Unique identifier of an API.
      * @return Api ID if successful, null if failed.
      */
-    Integer addApiToUser(String userName, Integer apiId);
+    Integer addApiToUser(String username, Integer apiId);
 
     /**
      * Returns a list of all API IDs of which grants the user access to the corresponding tools.
-     * @param userName Unique identifier of the user data.
+     * @param username Unique identifier of the user data.
      * @return List of API IDs if successful, null if no user with this ID is saved.
      */
-    List<Integer> fetchApiListFromUser(String userName);
+    List<Integer> fetchApiListFromUser(String username);
 
     /**
      * Deletes an API ID from a user so that the user no longer has access to the corresponding tool.
-     * @param userName Unique identifier of the user data.
+     * @param username Unique identifier of the user data.
      * @param apiId Unique identifier of an API.
      */
-    void deleteApiIdFromUser(String userName, Integer apiId);
+    void deleteApiIdFromUser(String username, Integer apiId);
 
     /**
      * Returns a list of groups which the user is part of and also his corresponding role within the groups.
-     * @param userName Unique identifier of the user data.
+     * @param username Unique identifier of the user data.
      * @return List of groups with the corresponding user role.
      */
-    List<GroupWithGroupRole> fetchGroupListFromUser(String userName);
+    List<GroupWithGroupRole> fetchGroupListFromUser(String username);
 }

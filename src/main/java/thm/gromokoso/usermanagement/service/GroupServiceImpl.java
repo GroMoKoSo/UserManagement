@@ -1,6 +1,7 @@
 package thm.gromokoso.usermanagement.service;
 
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 import thm.gromokoso.usermanagement.entity.*;
 import thm.gromokoso.usermanagement.model.UserWithGroupRole;
 import thm.gromokoso.usermanagement.repository.GroupRepository;
@@ -8,6 +9,7 @@ import thm.gromokoso.usermanagement.repository.GroupRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;

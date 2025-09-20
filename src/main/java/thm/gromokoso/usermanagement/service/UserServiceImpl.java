@@ -1,5 +1,6 @@
 package thm.gromokoso.usermanagement.service;
 
+import org.springframework.stereotype.Service;
 import thm.gromokoso.usermanagement.entity.User;
 import thm.gromokoso.usermanagement.entity.UserToApi;
 import thm.gromokoso.usermanagement.entity.UserToGroup;
@@ -9,6 +10,7 @@ import thm.gromokoso.usermanagement.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;

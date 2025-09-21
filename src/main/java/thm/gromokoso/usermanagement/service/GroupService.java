@@ -1,9 +1,9 @@
 package thm.gromokoso.usermanagement.service;
 
 import org.springframework.stereotype.Service;
-import thm.gromokoso.usermanagement.entity.EGroupRole;
-import thm.gromokoso.usermanagement.model.UserWithGroupRole;
-import thm.gromokoso.usermanagement.model.GroupDto;
+import thm.gromokoso.usermanagement.dto.GroupToApiDto;
+import thm.gromokoso.usermanagement.dto.UserWithGroupRole;
+import thm.gromokoso.usermanagement.dto.GroupDto;
 
 import java.util.List;
 
@@ -54,10 +54,9 @@ public interface GroupService {
     /**
      * Adds a User to a group so that he will be a members and has access to the corresponding tool.
      * @param name Unique identifier of the group data.
-     * @param username Name of the user which should be added.
-     * @param role Role which teh user should have within the group.
+     * @param userWithGroupRole Dataset of a User and an EGroupRole.
      */
-    GroupDto addUserToGroupList(String name, String username, EGroupRole role);
+    GroupDto addUserToGroupList(String name, UserWithGroupRole userWithGroupRole);
 
     /**
      * Deletes a User from a group so that he is no longer a members and no longer has access to the corresponding tool.
@@ -69,17 +68,25 @@ public interface GroupService {
     /**
      * Saves the given API ID to the Group data which grants the Group and it's members access to the corresponding tool.
      * @param name Unique identifier of the group data.
-     * @param apiId Unique identifier of an API.
+     * @param groupToApiDto Dataset containing the data of the API.
      * @return Api ID if successful, null if failed.
      */
-    Integer addApiIdToGroup(String name, Integer apiId);
+    GroupToApiDto addApiIdToGroup(String name, GroupToApiDto groupToApiDto);
 
     /**
      * Returns a list of all API IDs of which grants the group and it's members access to the corresponding tools.
      * @param name Unique identifier of the group data.
      * @return List of API IDs if successful, null if no user with this ID is saved.
      */
-    List<Integer> fetchApiIdListFromGroup(String name);
+    List<GroupToApiDto> fetchApiIdListFromGroup(String name);
+
+    /**
+     * Updates an API ID from a group so that the group and it's members have access to the corresponding tool.
+     * @param name Unique identifier of the group data.
+     * @param apiId Unique identifier of an API.
+     * @param groupToApiDto Dataset containing the new Data of the API.
+     */
+    GroupToApiDto updateApiIdFromGroup(String name, Integer apiId, GroupToApiDto groupToApiDto);
 
     /**
      * Deletes an API ID from a group so that the group and it's members no longer have access to the corresponding tool.

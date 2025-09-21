@@ -1,8 +1,9 @@
 package thm.gromokoso.usermanagement.service;
 
 import org.springframework.stereotype.Service;
-import thm.gromokoso.usermanagement.model.UserDto;
-import thm.gromokoso.usermanagement.model.GroupWithGroupRole;
+import thm.gromokoso.usermanagement.dto.UserDto;
+import thm.gromokoso.usermanagement.dto.GroupWithGroupRole;
+import thm.gromokoso.usermanagement.dto.UserToApiDto;
 
 import java.util.List;
 
@@ -46,17 +47,24 @@ public interface UserService {
     /**
      * Saves the given API ID to the User data which grants the User access to the corresponding tool.
      * @param username Unique identifier of the user data.
-     * @param apiId Unique identifier of an API.
+     * @param userToApiIdDto Dataset of the API which should be updated from the User including ID and whether its active.
      * @return Api ID if successful, null if failed.
      */
-    Integer addApiToUser(String username, Integer apiId);
+    UserToApiDto addApiToUser(String username, UserToApiDto userToApiIdDto);
 
     /**
      * Returns a list of all API IDs of which grants the user access to the corresponding tools.
      * @param username Unique identifier of the user data.
-     * @return List of API IDs if successful, null if no user with this ID is saved.
+     * @return List of API IDs and whether their active if successful, null if no user with this ID is saved.
      */
-    List<Integer> fetchApiListFromUser(String username);
+    List<UserToApiDto> fetchApiListFromUser(String username);
+
+    /**
+     * Deletes an API ID from a user so that the user no longer has access to the corresponding tool.
+     * @param username Unique identifier of the user data.
+     * @param userToApiIdDto Dataset of the API which should be updated from the User including ID and whether its active.
+     */
+    UserToApiDto updateApiFromUser(String username, UserToApiDto userToApiIdDto);
 
     /**
      * Deletes an API ID from a user so that the user no longer has access to the corresponding tool.

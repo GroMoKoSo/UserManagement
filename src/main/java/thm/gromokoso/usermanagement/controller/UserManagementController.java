@@ -1,8 +1,9 @@
 package thm.gromokoso.usermanagement.controller;
 
 import org.springframework.web.bind.annotation.*;
-import thm.gromokoso.usermanagement.model.UserDto;
-import thm.gromokoso.usermanagement.model.GroupWithGroupRole;
+import thm.gromokoso.usermanagement.dto.UserDto;
+import thm.gromokoso.usermanagement.dto.GroupWithGroupRole;
+import thm.gromokoso.usermanagement.dto.UserToApiDto;
 import thm.gromokoso.usermanagement.service.UserService;
 
 import java.util.List;
@@ -30,10 +31,13 @@ public class UserManagementController {
     public void deleteUser(@PathVariable String username) { userService.deleteUserByUserName(username); }
 
     @GetMapping("/users/{username}/apis")
-    public List<Integer> getApis(@PathVariable String username) { return userService.fetchApiListFromUser(username); }
+    public List<UserToApiDto> getApis(@PathVariable String username) { return userService.fetchApiListFromUser(username); }
 
     @PostMapping("/users/{username}/apis")
-    public Integer addApis(@PathVariable String username, @RequestBody Integer api_id) { return userService.addApiToUser(username, api_id); }
+    public UserToApiDto addApis(@PathVariable String username, @RequestBody UserToApiDto userToApiDto) { return userService.addApiToUser(username, userToApiDto); }
+
+    @PutMapping("users/{username}/apis/{api_id}")
+    public UserToApiDto updateApi(@PathVariable String username, @RequestBody UserToApiDto userToApiDto) { return userService.updateApiFromUser(username, userToApiDto); }
 
     @DeleteMapping("/users/{username}/apis/{api_id}")
     public void deleteApi(@PathVariable String username, @PathVariable Integer api_id) { userService.deleteApiIdFromUser(username, api_id); }

@@ -1,9 +1,9 @@
 package thm.gromokoso.usermanagement.controller;
 
 import org.springframework.web.bind.annotation.*;
-import thm.gromokoso.usermanagement.entity.EGroupRole;
-import thm.gromokoso.usermanagement.model.GroupDto;
-import thm.gromokoso.usermanagement.model.UserWithGroupRole;
+import thm.gromokoso.usermanagement.dto.GroupDto;
+import thm.gromokoso.usermanagement.dto.UserWithGroupRole;
+import thm.gromokoso.usermanagement.dto.GroupToApiDto;
 import thm.gromokoso.usermanagement.service.GroupService;
 
 
@@ -32,10 +32,13 @@ public class GroupManagementController {
     public void deleteGroup(@PathVariable String name) { groupService.deleteGroupByGroupName(name); }
 
     @GetMapping("/groups/{name}/apis")
-    public List<Integer> getApiIdsOfGroup(@PathVariable String name) { return groupService.fetchApiIdListFromGroup(name); }
+    public List<GroupToApiDto> getApiIdsOfGroup(@PathVariable String name) { return groupService.fetchApiIdListFromGroup(name); }
 
     @PostMapping("/groups/{name}/apis")
-    public Integer addApiIdToGroup(@PathVariable String name, @RequestBody Integer api_id) { return groupService.addApiIdToGroup(name, api_id); }
+    public GroupToApiDto addApiIdToGroup(@PathVariable String name, @RequestBody GroupToApiDto groupToApiDto) { return groupService.addApiIdToGroup(name, groupToApiDto); }
+
+    @PutMapping("/groups/{name}/apis/{api_id}")
+    public GroupToApiDto updateApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id, @RequestBody GroupToApiDto groupToApiDto) { return groupService.updateApiIdFromGroup(name, api_id, groupToApiDto); }
 
     @DeleteMapping("/groups/{name}/apis/{api_id}")
     public void deleteApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id) { groupService.deleteApiIdFromGroup(name, api_id); }
@@ -44,7 +47,7 @@ public class GroupManagementController {
     public List<UserWithGroupRole> getUsersOfGroup(@PathVariable String name) { return groupService.fetchUserListFromGroup(name); }
 
     @PostMapping("/groups/{name}/users")
-    public GroupDto addUserToGroup(@PathVariable String name, @RequestBody String username, @RequestBody EGroupRole role) { return groupService.addUserToGroupList(name, username, role); }
+    public GroupDto addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRole userWithGroupRole) { return groupService.addUserToGroupList(name, userWithGroupRole); }
 
     @DeleteMapping("/groups/{name}/users/{username}")
     public void deleteUserFromGroup(@PathVariable String name, @PathVariable String username) { groupService.deleteUserFromGroup(name, username); }

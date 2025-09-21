@@ -1,4 +1,4 @@
-package thm.gromokoso.usermanagement.model;
+package thm.gromokoso.usermanagement.dto;
 
 import thm.gromokoso.usermanagement.entity.ESystemRole;
 

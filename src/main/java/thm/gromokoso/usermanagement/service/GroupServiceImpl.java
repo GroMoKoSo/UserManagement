@@ -55,7 +55,6 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public GroupDto updateGroupByGroupName(GroupDto group, String name) {
         Group dbGroup = groupRepository.findById(name).orElseThrow();
-        dbGroup.setGroupName(group.name());
         dbGroup.setDescription(group.description());
         dbGroup.setType(group.visibility());
         groupRepository.save(dbGroup);
@@ -69,6 +68,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public List<UserWithGroupRole> fetchUserListFromGroup(String name) {
         return userToGroupRepository.findByGroup_GroupName(name).stream()
                 .map(userToGroup ->
@@ -107,11 +107,12 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public List<GroupToApiDto> fetchApiIdListFromGroup(String name) {
         List<GroupToApiDto> groupToApiIdList = new ArrayList<>();
-        Group dbGroup = groupRepository.findById(name).orElseThrow();
+        Group dbGroup = groupRepository.findByIdWithApis(name).orElseThrow();
         for (GroupToApi groupToApi : dbGroup.getApiAccesses()) {
-            groupToApiIdList.add(new GroupToApiDto(groupToApi.getApiId(), groupToApi.isActive()));
+            groupToApiIdList.add(new GroupToApiDto(groupToApi.getId().getApiId(), groupToApi.isActive()));
         }
         return groupToApiIdList;
     }
@@ -119,14 +120,13 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public GroupToApiDto updateApiIdFromGroup(String name, Integer apiId, GroupToApiDto groupToApiDto) {
-        // TODO fix when primary key issue is resolved
+        GroupToApiId groupToApiId = new GroupToApiId(apiId, name);
         Group dbGroup = groupRepository.findById(name).orElseThrow();
-        GroupToApi dbGroupToApi = groupToApiRepository.findById(apiId).orElseThrow();
-        dbGroupToApi.setApiId(groupToApiDto.apiId());
+        GroupToApi dbGroupToApi = groupToApiRepository.findById(groupToApiId).orElseThrow();
         dbGroupToApi.setGroup(dbGroup);
         dbGroupToApi.setActive(groupToApiDto.active());
         groupToApiRepository.save(dbGroupToApi);
-        return new GroupToApiDto(dbGroupToApi.getApiId(), dbGroupToApi.isActive());
+        return new GroupToApiDto(dbGroupToApi.getId().getApiId(), dbGroupToApi.isActive());
     }
 
     @Override
@@ -135,7 +135,7 @@ public class GroupServiceImpl implements GroupService {
         Group dbGroup = groupRepository.findById(name).orElseThrow();
         List<GroupToApi> apiAccesses = dbGroup.getApiAccesses();
         apiAccesses.stream().filter(
-                        groupToApi -> groupToApi.getApiId().equals(apiId))
+                        groupToApi -> groupToApi.getId().getApiId().equals(apiId))
                 .findFirst().ifPresent(apiAccesses::remove);
     }
 

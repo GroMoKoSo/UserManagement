@@ -1,7 +1,6 @@
 package thm.gromokoso.usermanagement.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,13 +8,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class UserToApi {
-    @Id
-    private Integer apiId;
+    @EmbeddedId
+    private UserToApiId id;
+
     @ManyToOne
-    @JoinColumn(name="userName", nullable = false)
+    @MapsId("userName")
+    @JoinColumn(name = "user_name", nullable = false)
     private User user;
+
+    @Column(nullable = false)
     private boolean active;
+
+    public UserToApi(Integer apiId, User user, Boolean active) {
+        this.id = new UserToApiId(apiId, user.getUserName());
+        this.user = user;
+        this.active = active;
+    }
 }

@@ -15,10 +15,12 @@ public class UserToGroup {
 
     @ManyToOne
     @MapsId("userName")
+    @JoinColumn(name = "user_name", nullable = false)
     private User user;
 
     @ManyToOne
     @MapsId("groupName")
+    @JoinColumn(name = "group_name", nullable = false)
     private Group group;
 
     @Enumerated(EnumType.STRING)

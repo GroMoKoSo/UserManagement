@@ -7,6 +7,7 @@ import thm.gromokoso.usermanagement.dto.UserDto;
 import thm.gromokoso.usermanagement.dto.UserToApiDto;
 import thm.gromokoso.usermanagement.entity.User;
 import thm.gromokoso.usermanagement.entity.UserToApi;
+import thm.gromokoso.usermanagement.entity.UserToApiId;
 import thm.gromokoso.usermanagement.entity.UserToGroup;
 import thm.gromokoso.usermanagement.dto.GroupWithGroupRole;
 import thm.gromokoso.usermanagement.repository.UserRepository;
@@ -49,7 +50,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto updateUser(UserDto user, String username) {
         User dbUser = userRepository.findById(username).orElseThrow();
-        dbUser.setUserName(user.userName());
         dbUser.setFirstName(user.firstName());
         dbUser.setLastName(user.lastName());
         dbUser.setEmail(user.email());
@@ -73,12 +73,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public List<UserToApiDto> fetchApiListFromUser(String username) {
         List<UserToApiDto> userToApiDtoList = new ArrayList<>();
-        User dbUser = userRepository.findById(username).orElseThrow();
+        User dbUser = userRepository.findByIdWithApis(username).orElseThrow();
         List<UserToApi> apiAccesses = dbUser.getApiAccesses();
         for (UserToApi userToApi : apiAccesses) {
-            userToApiDtoList.add(new UserToApiDto(userToApi.getApiId(), userToApi.isActive()));
+            userToApiDtoList.add(new UserToApiDto(userToApi.getId().getApiId(), userToApi.isActive()));
         }
         return userToApiDtoList;
     }
@@ -86,11 +87,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserToApiDto updateApiFromUser(String username, Integer apiId,  UserToApiDto userToApiIdDto) {
-        // TODO Fix when primary key issue is resolved
-        UserToApi userToApi = userToApiRepository.findById(userToApiIdDto.apiId()).orElseThrow();
-        User dbUser = userRepository.findById(username).orElseThrow();
-        userToApi.setApiId(userToApiIdDto.apiId());
-        userToApi.setUser(dbUser);
+        UserToApiId userToApiId = new UserToApiId(apiId, username);
+        UserToApi userToApi = userToApiRepository.findById(userToApiId).orElseThrow();
         userToApi.setActive(userToApi.isActive());
         userToApiRepository.save(userToApi);
         return userToApiIdDto;
@@ -99,10 +97,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteApiIdFromUser(String username, Integer apiId) {
+        UserToApiId userToApiId = new UserToApiId(apiId, username);
         User dbUser = userRepository.findById(username).orElseThrow();
         List<UserToApi> apiAccesses = dbUser.getApiAccesses();
         apiAccesses.stream().filter(
-                        userToApi -> userToApi.getApiId().equals(apiId))
+                        userToApi -> userToApi.getId().equals(userToApiId))
                 .findFirst().ifPresent(apiAccesses::remove);
     }
 

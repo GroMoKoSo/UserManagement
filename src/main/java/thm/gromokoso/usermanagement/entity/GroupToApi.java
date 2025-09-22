@@ -1,7 +1,6 @@
 package thm.gromokoso.usermanagement.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,14 +8,21 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class GroupToApi {
-    @Id
-    private Integer apiId;
+    @EmbeddedId
+    private GroupToApiId id;
+
+
     @ManyToOne
-    @JoinColumn(name="groupName", nullable = false)
+    @MapsId("groupName")
+    @JoinColumn(name="group_name", nullable = false)
     private Group group;
     private boolean active;
 
+    public GroupToApi(Integer api_id, Group group, boolean active) {
+        this.id = new GroupToApiId(api_id, group.getGroupName());
+        this.group = group;
+        this.active = active;
+    }
 }

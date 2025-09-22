@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserToApiDto updateApiFromUser(String username, UserToApiDto userToApiIdDto) {
+    public UserToApiDto updateApiFromUser(String username, Integer apiId,  UserToApiDto userToApiIdDto) {
         // TODO Fix when primary key issue is resolved
         UserToApi userToApi = userToApiRepository.findById(userToApiIdDto.apiId()).orElseThrow();
         User dbUser = userRepository.findById(username).orElseThrow();

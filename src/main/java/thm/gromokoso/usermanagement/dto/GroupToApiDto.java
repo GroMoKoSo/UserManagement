@@ -1,3 +1,11 @@
 package thm.gromokoso.usermanagement.dto;
 
-public record GroupToApiDto(Integer apiId, boolean active) { }
+import io.swagger.v3.oas.annotations.media.Schema;
+
+public record GroupToApiDto(
+        @Schema(example = "123")
+        Integer apiId,
+        @Schema(example = "true")
+        boolean active
+)
+{ }

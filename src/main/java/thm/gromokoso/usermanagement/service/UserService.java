@@ -62,9 +62,10 @@ public interface UserService {
     /**
      * Deletes an API ID from a user so that the user no longer has access to the corresponding tool.
      * @param username Unique identifier of the user data.
+     * @param apiId Unique identifier of an API.
      * @param userToApiIdDto Dataset of the API which should be updated from the User including ID and whether its active.
      */
-    UserToApiDto updateApiFromUser(String username, UserToApiDto userToApiIdDto);
+    UserToApiDto updateApiFromUser(String username, Integer apiId, UserToApiDto userToApiIdDto);
 
     /**
      * Deletes an API ID from a user so that the user no longer has access to the corresponding tool.

@@ -1,47 +1,126 @@
 package thm.gromokoso.usermanagement.controller;
 
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.bind.annotation.*;
-import thm.gromokoso.usermanagement.dto.UserDto;
-import thm.gromokoso.usermanagement.dto.GroupWithGroupRole;
-import thm.gromokoso.usermanagement.dto.UserToApiDto;
-import thm.gromokoso.usermanagement.service.UserService;
+import thm.gromokoso.usermanagement.dto.*;
 
 import java.util.List;
 
-@RestController
-public class UserManagementController {
+public interface UserManagementController {
 
-    private final UserService userService;
-
-    public UserManagementController(UserService userService) { this.userService = userService; }
-
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully returned all Users",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema( schema = @Schema(implementation = UserDto.class)))}),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content)}
+    )
     @GetMapping("/users")
-    public List<UserDto> getUsers() { return userService.fetchUserList(); }
+    List<UserDto> getUsers();
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Added new User",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDto.class)) }),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content)}
+    )
     @PostMapping("/users")
-    public UserDto addUser(@RequestBody UserDto user) { return userService.saveUser(user); }
+    UserDto addUser(@RequestBody UserDto user);
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found User",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDto.class)) }),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Invalid Username",
+                    content = @Content)}
+    )
     @GetMapping("/users/{username}")
-    public UserDto getUser(@PathVariable String username) { return userService.findUserByUserName(username); }
+    UserDto getUser(@PathVariable String username);
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated User",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDto.class)) }),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Invalid Username",
+                    content = @Content)}
+    )
     @PutMapping("/users/{username}")
-    public UserDto updateUser(@PathVariable String username, @RequestBody UserDto user) { return userService.updateUser(user, username); }
+    UserDto updateUser(@PathVariable String username, @RequestBody UserDto user);
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "User was successfully deleted."),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Invalid Username",
+                    content = @Content)}
+    )
     @DeleteMapping("/users/{username}")
-    public void deleteUser(@PathVariable String username) { userService.deleteUserByUserName(username); }
+    void deleteUser(@PathVariable String username);
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "API ID's of User successfully returned.",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = UserToApiDto.class)))}),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Invalid Username",
+                    content = @Content)}
+    )
     @GetMapping("/users/{username}/apis")
-    public List<UserToApiDto> getApis(@PathVariable String username) { return userService.fetchApiListFromUser(username); }
+    List<UserToApiDto> getApis(@PathVariable String username);
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "API ID for User successfully added.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserToApiDto.class)) }),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Invalid Username",
+                    content = @Content)}
+    )
     @PostMapping("/users/{username}/apis")
-    public UserToApiDto addApis(@PathVariable String username, @RequestBody UserToApiDto userToApiDto) { return userService.addApiToUser(username, userToApiDto); }
+    UserToApiDto addApis(@PathVariable String username, @RequestBody UserToApiDto userToApiDto);
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "API ID for User successfully updated.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserToApiDto.class)) }),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Invalid Username or API ID",
+                    content = @Content)}
+    )
     @PutMapping("users/{username}/apis/{api_id}")
-    public UserToApiDto updateApi(@PathVariable String username, @RequestBody UserToApiDto userToApiDto) { return userService.updateApiFromUser(username, userToApiDto); }
+    UserToApiDto updateApi(@PathVariable String username, @PathVariable Integer api_id, @RequestBody UserToApiDto userToApiDto);
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "API ID from User successfully deleted."),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Invalid Username or API ID",
+                    content = @Content)}
+    )
     @DeleteMapping("/users/{username}/apis/{api_id}")
-    public void deleteApi(@PathVariable String username, @PathVariable Integer api_id) { userService.deleteApiIdFromUser(username, api_id); }
+    void deleteApi(@PathVariable String username, @PathVariable Integer api_id);
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All Groups of User with their Role in the group successfully returned.",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GroupWithGroupRole.class)))}),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Invalid Username",
+                    content = @Content)}
+    )
     @GetMapping("/users/{username}/groups")
-    public List<GroupWithGroupRole> getGroups(@PathVariable String username) { return userService.fetchGroupListFromUser(username); }
+    List<GroupWithGroupRole> getGroups(@PathVariable String username);
 }

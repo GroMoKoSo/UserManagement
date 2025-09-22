@@ -11,7 +11,7 @@ import thm.gromokoso.usermanagement.dto.*;
 
 import java.util.List;
 
-@Tag(name = "USer Management", description = "All Endpoints related to manage users.")
+@Tag(name = "User Management", description = "All Endpoints related to manage users.")
 public interface UserManagementController {
 
     @ApiResponses(value = {

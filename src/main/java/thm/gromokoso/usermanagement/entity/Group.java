@@ -18,7 +18,7 @@ public class Group {
     @Id
     private String groupName;
     private String description;
-    @OneToMany(mappedBy="group")
+    @OneToMany(mappedBy="group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupToApi> apiAccesses;
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserToGroup> userMappings;

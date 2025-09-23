@@ -49,11 +49,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto updateUser(UserDto user, String username) {
+        // Get Database References
         User dbUser = userRepository.findById(username).orElseThrow();
+
+        // Update Values
         dbUser.setFirstName(user.firstName());
         dbUser.setLastName(user.lastName());
         dbUser.setEmail(user.email());
         dbUser.setSystemRole(user.systemRole());
+
+        // Save
         userRepository.save(dbUser);
         return convertUserToUserDto(dbUser);
     }
@@ -67,8 +72,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserToApiDto addApiToUser(String username, UserToApiDto userToApiIdDto) {
+        // Get Database References
         User dbUser = userRepository.findById(username).orElseThrow();
-        userToApiRepository.save(new UserToApi(userToApiIdDto.apiId(), dbUser, userToApiIdDto.active()));
+
+        // Create Entity
+        UserToApi userToApi = new UserToApi(userToApiIdDto.apiId(), dbUser, userToApiIdDto.active());
+
+        // Save
+        userToApiRepository.save(userToApi);
         return userToApiIdDto;
     }
 
@@ -86,12 +97,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserToApiDto updateApiFromUser(String username, Integer apiId,  UserToApiDto userToApiIdDto) {
+    public UserToApiDto updateApiFromUser(String username, Integer apiId,  UserToApiDto userToApiDto) {
+        // Get Database References
         UserToApiId userToApiId = new UserToApiId(apiId, username);
         UserToApi userToApi = userToApiRepository.findById(userToApiId).orElseThrow();
-        userToApi.setActive(userToApi.isActive());
+
+        // Update Values
+        userToApi.setActive(userToApiDto.active());
+
+        // Save
         userToApiRepository.save(userToApi);
-        return userToApiIdDto;
+        return userToApiDto;
     }
 
     @Override
@@ -106,6 +122,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public List<GroupWithGroupRole> fetchGroupListFromUser(String username) {
         List<GroupWithGroupRole> groupWithGroupRoleList = new ArrayList<>();
         User dbUser = userRepository.findById(username).orElseThrow();

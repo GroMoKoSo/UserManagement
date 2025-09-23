@@ -54,9 +54,14 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public GroupDto updateGroupByGroupName(GroupDto group, String name) {
+        // Get Database References
         Group dbGroup = groupRepository.findById(name).orElseThrow();
+
+        // Update Values
         dbGroup.setDescription(group.description());
         dbGroup.setType(group.visibility());
+
+        // Save
         groupRepository.save(dbGroup);
         return convertGroupToGroupDto(dbGroup);
     }
@@ -84,12 +89,32 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupDto addUserToGroupList(String name, UserWithGroupRole userWithGroupRole) {
+    public UserWithGroupRole addUserToGroupList(String name, UserWithGroupRole userWithGroupRole) {
+        // Get Database References
         Group dbGroup = groupRepository.findById(name).orElseThrow();
         User dbUser = userRepository.findById(userWithGroupRole.user().userName()).orElseThrow();
+
+        // Create new Entity
         UserToGroup userToGroup = new UserToGroup(dbUser, dbGroup, userWithGroupRole.groupRole());
+
+        // Save
         userToGroupRepository.save(userToGroup);
-        return convertGroupToGroupDto(dbGroup);
+        return userWithGroupRole;
+    }
+
+    @Override
+    @Transactional
+    public UserWithGroupRole updateUserFromGroup(String name, String username, UserWithGroupRole userWithGroupRole) {
+        // Get Database References
+        UserToGroupId userToGroupId = new UserToGroupId(username, name);
+        UserToGroup dbUserToGroup = userToGroupRepository.findById(userToGroupId).orElseThrow();
+
+        // Update Values
+        dbUserToGroup.setGroupRole(userWithGroupRole.groupRole());
+
+        // Save
+        userToGroupRepository.save(dbUserToGroup);
+        return userWithGroupRole;
     }
 
     @Override
@@ -101,8 +126,14 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public GroupToApiDto addApiIdToGroup(String name, GroupToApiDto groupToApiDto) {
+        // Get Database References
         Group dbGroup = groupRepository.findById(name).orElseThrow();
-        groupToApiRepository.save(new GroupToApi(groupToApiDto.apiId(), dbGroup, groupToApiDto.active()));
+
+        // Create new Entity
+        GroupToApi groupToApi = new GroupToApi(groupToApiDto.apiId(), dbGroup, groupToApiDto.active());
+
+        // Save
+        groupToApiRepository.save(groupToApi);
         return groupToApiDto;
     }
 
@@ -120,11 +151,14 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public GroupToApiDto updateApiIdFromGroup(String name, Integer apiId, GroupToApiDto groupToApiDto) {
+        // Get Database References
         GroupToApiId groupToApiId = new GroupToApiId(apiId, name);
-        Group dbGroup = groupRepository.findById(name).orElseThrow();
         GroupToApi dbGroupToApi = groupToApiRepository.findById(groupToApiId).orElseThrow();
-        dbGroupToApi.setGroup(dbGroup);
+
+        // Update Values
         dbGroupToApi.setActive(groupToApiDto.active());
+
+        // Save
         groupToApiRepository.save(dbGroupToApi);
         return new GroupToApiDto(dbGroupToApi.getId().getApiId(), dbGroupToApi.isActive());
     }

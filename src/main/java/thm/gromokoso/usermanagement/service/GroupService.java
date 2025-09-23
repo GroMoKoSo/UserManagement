@@ -56,7 +56,15 @@ public interface GroupService {
      * @param name Unique identifier of the group data.
      * @param userWithGroupRole Dataset of a User and an EGroupRole.
      */
-    GroupDto addUserToGroupList(String name, UserWithGroupRole userWithGroupRole);
+    UserWithGroupRole addUserToGroupList(String name, UserWithGroupRole userWithGroupRole);
+
+    /**
+     * Updates the Userdata from a user of the group.
+     * @param name Unique identifier of the group data.
+     * @param username Unique identifier of the user data.
+     * @param userWithGroupRole Dataset of a User and an EGroupRole.
+     */
+    UserWithGroupRole updateUserFromGroup(String name, String username, UserWithGroupRole userWithGroupRole);
 
     /**
      * Deletes a User from a group so that he is no longer a members and no longer has access to the corresponding tool.

@@ -132,14 +132,26 @@ public interface GroupManagementController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User successfully added to Group.",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = GroupDto.class)) }),
+                            schema = @Schema(implementation = UserWithGroupRole.class)) }),
             @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Invalid Group name",
                     content = @Content)}
     )
     @PostMapping("/groups/{name}/users")
-    GroupDto addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRole userWithGroupRole);
+    UserWithGroupRole addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRole userWithGroupRole);
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User from Group successfully updated.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserWithGroupRole.class)) }),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Invalid Group name or Username",
+                    content = @Content)}
+    )
+    @PutMapping("/groups/{name}/users/{username}")
+    UserWithGroupRole updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UserWithGroupRole userWithGroupRole);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User from Group successfully deleted."),

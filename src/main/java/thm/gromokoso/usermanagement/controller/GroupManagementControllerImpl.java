@@ -47,7 +47,10 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     public List<UserWithGroupRole> getUsersOfGroup(@PathVariable String name) { return groupService.fetchUserListFromGroup(name); }
 
     @Override
-    public GroupDto addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRole userWithGroupRole) { return groupService.addUserToGroupList(name, userWithGroupRole); }
+    public UserWithGroupRole addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRole userWithGroupRole) { return groupService.addUserToGroupList(name, userWithGroupRole); }
+
+    @Override
+    public UserWithGroupRole updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UserWithGroupRole userWithGroupRole) { return groupService.updateUserFromGroup(name, username, userWithGroupRole); }
 
     @Override
     public void deleteUserFromGroup(@PathVariable String name, @PathVariable String username) { groupService.deleteUserFromGroup(name, username); }

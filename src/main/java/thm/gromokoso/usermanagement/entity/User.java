@@ -19,7 +19,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    @OneToMany(mappedBy="user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserToApi> apiAccesses;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserToGroup> groupMappings;

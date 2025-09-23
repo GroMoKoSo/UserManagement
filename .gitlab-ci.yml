@@ -7,7 +7,7 @@ cache:
 variables:
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE:latest
   CONTAINER_NAME: "GroMoKoSo_$CI_PROJECT_NAME"
-  CONTAINER_NAME_DB: "GroMoKoSo_$CI_PROJECT_NAME_DB"
+  CONTAINER_NAME_DB: "GroMoKoSo_${CI_PROJECT_NAME}_DB"
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
 stages:
@@ -39,7 +39,7 @@ stages:
       --name $CONTAINER_NAME_DB 
       --restart=always -d 
       --network=internal_net
-      -v /home/swt2025/$CONTAINER_NAME_db/data:/app/data
+      -v /home/swt2025/$CONTAINER_NAME_DB/data:/app/data
       -e MYSQL_ROOT_PASSWORD=$CI_MYSQL_ROOT
       -e MYSQL_DATABASE=userdb
       -e MYSQL_USER=$CI_MYSQL_USER
@@ -52,7 +52,7 @@ stages:
       -d --network=internal_net
       -v /home/swt2025/$CONTAINER_NAME/data:/app/data
       -e SPRING_PROFILES_ACTIVE=prod
-      -e SPRING_DATASOURCE_URL=jdbc:mariadb://$CONTAINER_NAME_db:3306/tooldb
+      -e SPRING_DATASOURCE_URL=jdbc:mariadb://$CONTAINER_NAME_DB:3306/userdb
       -e SPRING_DATASOURCE_USERNAME=$CI_MYSQL_USER
       -e SPRING_DATASOURCE_PASSWORD=$CI_MYSQL_PASSWORD
       $DOCKER_IMAGE

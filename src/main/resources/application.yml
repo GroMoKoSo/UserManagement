@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: usermanagement
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # nur für Entwicklung, in Prod lieber 'validate'
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+    show-sql: true
+    open-in-view: false
+
+server:
+  port: 8080

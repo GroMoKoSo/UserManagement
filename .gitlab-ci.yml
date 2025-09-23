@@ -41,7 +41,7 @@ stages:
       --network=internal_net
       -v /home/swt2025/$CONTAINER_NAME_db/data:/app/data
       -e MYSQL_ROOT_PASSWORD=$CI_MYSQL_ROOT
-      -e MYSQL_DATABASE=tooldb
+      -e MYSQL_DATABASE=userdb
       -e MYSQL_USER=$CI_MYSQL_USER
       -e MYSQL_PASSWORD=$CI_MYSQL_PASSWORD
       mariadb:12.0.2 || true
@@ -78,7 +78,7 @@ deploy_prod_container:
   variables:
     DOCKER_IMAGE: $DOCKER_IMAGE_APP
   rules:
-    - if: '$CI_COMMIT_BRANCH == "database-docker-container"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
       when: manual
   environment:
     name: production

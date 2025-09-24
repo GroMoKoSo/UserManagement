@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import thm.gromokoso.usermanagement.dto.GroupDto;
 import thm.gromokoso.usermanagement.dto.GroupToApiDto;
-import thm.gromokoso.usermanagement.dto.UserWithGroupRole;
+import thm.gromokoso.usermanagement.dto.UserWithGroupRoleDto;
 
 import java.util.List;
 
@@ -120,38 +120,38 @@ public interface GroupManagementController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All Users of Group successfully returned.",
                     content = { @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = UserWithGroupRole.class)))}),
+                            array = @ArraySchema(schema = @Schema(implementation = UserWithGroupRoleDto.class)))}),
             @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Invalid Group name",
                     content = @Content)}
     )
     @GetMapping("/groups/{name}/users")
-    List<UserWithGroupRole> getUsersOfGroup(@PathVariable String name);
+    List<UserWithGroupRoleDto> getUsersOfGroup(@PathVariable String name);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User successfully added to Group.",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserWithGroupRole.class)) }),
+                            schema = @Schema(implementation = UserWithGroupRoleDto.class)) }),
             @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Invalid Group name",
                     content = @Content)}
     )
     @PostMapping("/groups/{name}/users")
-    UserWithGroupRole addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRole userWithGroupRole);
+    UserWithGroupRoleDto addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRoleDto userWithGroupRoleDto);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User from Group successfully updated.",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserWithGroupRole.class)) }),
+                            schema = @Schema(implementation = UserWithGroupRoleDto.class)) }),
             @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Invalid Group name or Username",
                     content = @Content)}
     )
     @PutMapping("/groups/{name}/users/{username}")
-    UserWithGroupRole updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UserWithGroupRole userWithGroupRole);
+    UserWithGroupRoleDto updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UserWithGroupRoleDto userWithGroupRoleDto);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User from Group successfully deleted."),

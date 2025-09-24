@@ -2,7 +2,7 @@ package thm.gromokoso.usermanagement.service;
 
 import org.springframework.stereotype.Service;
 import thm.gromokoso.usermanagement.dto.GroupToApiDto;
-import thm.gromokoso.usermanagement.dto.UserWithGroupRole;
+import thm.gromokoso.usermanagement.dto.UserWithGroupRoleDto;
 import thm.gromokoso.usermanagement.dto.GroupDto;
 
 import java.util.List;
@@ -49,22 +49,22 @@ public interface GroupService {
      * @param name Unique identifier of the group data.
      * @return List of Users with their corresponding Role.
      */
-    List<UserWithGroupRole> fetchUserListFromGroup(String name);
+    List<UserWithGroupRoleDto> fetchUserListFromGroup(String name);
 
     /**
      * Adds a User to a group so that he will be a members and has access to the corresponding tool.
      * @param name Unique identifier of the group data.
-     * @param userWithGroupRole Dataset of a User and an EGroupRole.
+     * @param userWithGroupRoleDto Dataset of a User and an EGroupRole.
      */
-    UserWithGroupRole addUserToGroupList(String name, UserWithGroupRole userWithGroupRole);
+    UserWithGroupRoleDto addUserToGroupList(String name, UserWithGroupRoleDto userWithGroupRoleDto);
 
     /**
      * Updates the Userdata from a user of the group.
      * @param name Unique identifier of the group data.
      * @param username Unique identifier of the user data.
-     * @param userWithGroupRole Dataset of a User and an EGroupRole.
+     * @param userWithGroupRoleDto Dataset of a User and an EGroupRole.
      */
-    UserWithGroupRole updateUserFromGroup(String name, String username, UserWithGroupRole userWithGroupRole);
+    UserWithGroupRoleDto updateUserFromGroup(String name, String username, UserWithGroupRoleDto userWithGroupRoleDto);
 
     /**
      * Deletes a User from a group so that he is no longer a members and no longer has access to the corresponding tool.

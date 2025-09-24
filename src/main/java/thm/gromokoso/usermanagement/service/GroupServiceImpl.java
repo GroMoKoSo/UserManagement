@@ -6,7 +6,7 @@ import thm.gromokoso.usermanagement.dto.GroupToApiDto;
 import thm.gromokoso.usermanagement.dto.UserDto;
 import thm.gromokoso.usermanagement.entity.*;
 import thm.gromokoso.usermanagement.dto.GroupDto;
-import thm.gromokoso.usermanagement.dto.UserWithGroupRole;
+import thm.gromokoso.usermanagement.dto.UserWithGroupRoleDto;
 import thm.gromokoso.usermanagement.repository.GroupRepository;
 import thm.gromokoso.usermanagement.repository.GroupToApiRepository;
 import thm.gromokoso.usermanagement.repository.UserRepository;
@@ -74,10 +74,10 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public List<UserWithGroupRole> fetchUserListFromGroup(String name) {
+    public List<UserWithGroupRoleDto> fetchUserListFromGroup(String name) {
         return userToGroupRepository.findByGroup_GroupName(name).stream()
                 .map(userToGroup ->
-                    new UserWithGroupRole(new UserDto(userToGroup.getUser().getUserName(),
+                    new UserWithGroupRoleDto(new UserDto(userToGroup.getUser().getUserName(),
                             userToGroup.getUser().getFirstName(),
                             userToGroup.getUser().getLastName(),
                             userToGroup.getUser().getEmail(),
@@ -89,32 +89,32 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public UserWithGroupRole addUserToGroupList(String name, UserWithGroupRole userWithGroupRole) {
+    public UserWithGroupRoleDto addUserToGroupList(String name, UserWithGroupRoleDto userWithGroupRoleDto) {
         // Get Database References
         Group dbGroup = groupRepository.findById(name).orElseThrow();
-        User dbUser = userRepository.findById(userWithGroupRole.user().userName()).orElseThrow();
+        User dbUser = userRepository.findById(userWithGroupRoleDto.user().userName()).orElseThrow();
 
         // Create new Entity
-        UserToGroup userToGroup = new UserToGroup(dbUser, dbGroup, userWithGroupRole.groupRole());
+        UserToGroup userToGroup = new UserToGroup(dbUser, dbGroup, userWithGroupRoleDto.groupRole());
 
         // Save
         userToGroupRepository.save(userToGroup);
-        return userWithGroupRole;
+        return userWithGroupRoleDto;
     }
 
     @Override
     @Transactional
-    public UserWithGroupRole updateUserFromGroup(String name, String username, UserWithGroupRole userWithGroupRole) {
+    public UserWithGroupRoleDto updateUserFromGroup(String name, String username, UserWithGroupRoleDto userWithGroupRoleDto) {
         // Get Database References
         UserToGroupId userToGroupId = new UserToGroupId(username, name);
         UserToGroup dbUserToGroup = userToGroupRepository.findById(userToGroupId).orElseThrow();
 
         // Update Values
-        dbUserToGroup.setGroupRole(userWithGroupRole.groupRole());
+        dbUserToGroup.setGroupRole(userWithGroupRoleDto.groupRole());
 
         // Save
         userToGroupRepository.save(dbUserToGroup);
-        return userWithGroupRole;
+        return userWithGroupRoleDto;
     }
 
     @Override

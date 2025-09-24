@@ -1,9 +1,7 @@
 package thm.gromokoso.usermanagement.controller;
 
 import org.springframework.web.bind.annotation.*;
-import thm.gromokoso.usermanagement.dto.UserDto;
-import thm.gromokoso.usermanagement.dto.GroupWithGroupRoleDto;
-import thm.gromokoso.usermanagement.dto.UserToApiDto;
+import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.service.UserService;
 
 import java.util.List;
@@ -25,7 +23,7 @@ public class UserManagementControllerImpl implements UserManagementController {
     public UserDto getUser(@PathVariable String username) { return userService.findUserByUserName(username); }
 
     @Override
-    public UserDto updateUser(@PathVariable String username, @RequestBody UserDto user) { return userService.updateUser(user, username); }
+    public UserDto updateUser(@PathVariable String username, @RequestBody UpdateUserDto user) { return userService.updateUser(username, user); }
 
     @Override
     public void deleteUser(@PathVariable String username) { userService.deleteUserByUserName(username); }
@@ -37,7 +35,7 @@ public class UserManagementControllerImpl implements UserManagementController {
     public UserToApiDto addApis(@PathVariable String username, @RequestBody UserToApiDto userToApiDto) { return userService.addApiToUser(username, userToApiDto); }
 
     @Override
-    public UserToApiDto updateApi(@PathVariable String username, @PathVariable Integer api_id, @RequestBody UserToApiDto userToApiDto) { return userService.updateApiFromUser(username, api_id, userToApiDto); }
+    public UserToApiDto updateApi(@PathVariable String username, @PathVariable Integer api_id, @RequestBody UpdateUserToApiDto userToApiDto) { return userService.updateApiFromUser(username, api_id, userToApiDto); }
 
     @Override
     public void deleteApi(@PathVariable String username, @PathVariable Integer api_id) { userService.deleteApiIdFromUser(username, api_id); }

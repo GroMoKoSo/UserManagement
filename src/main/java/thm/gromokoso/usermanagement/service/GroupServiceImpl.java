@@ -2,11 +2,8 @@ package thm.gromokoso.usermanagement.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import thm.gromokoso.usermanagement.dto.GroupToApiDto;
-import thm.gromokoso.usermanagement.dto.UserDto;
+import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.entity.*;
-import thm.gromokoso.usermanagement.dto.GroupDto;
-import thm.gromokoso.usermanagement.dto.UserWithGroupRoleDto;
 import thm.gromokoso.usermanagement.repository.GroupRepository;
 import thm.gromokoso.usermanagement.repository.GroupToApiRepository;
 import thm.gromokoso.usermanagement.repository.UserRepository;
@@ -53,13 +50,13 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupDto updateGroupByGroupName(GroupDto group, String name) {
+    public GroupDto updateGroupByGroupName(String name, UpdateGroupDto updateGroup) {
         // Get Database References
         Group dbGroup = groupRepository.findById(name).orElseThrow();
 
         // Update Values
-        dbGroup.setDescription(group.description());
-        dbGroup.setType(group.visibility());
+        dbGroup.setDescription(updateGroup.description());
+        dbGroup.setType(updateGroup.visibility());
 
         // Save
         groupRepository.save(dbGroup);
@@ -77,13 +74,7 @@ public class GroupServiceImpl implements GroupService {
     public List<UserWithGroupRoleDto> fetchUserListFromGroup(String name) {
         return userToGroupRepository.findByGroup_GroupName(name).stream()
                 .map(userToGroup ->
-                    new UserWithGroupRoleDto(new UserDto(userToGroup.getUser().getUserName(),
-                            userToGroup.getUser().getFirstName(),
-                            userToGroup.getUser().getLastName(),
-                            userToGroup.getUser().getEmail(),
-                            userToGroup.getUser().getSystemRole()),
-                            userToGroup.getGroupRole()))
-                            .toList();
+                    new UserWithGroupRoleDto(userToGroup.getUser().getUserName(), userToGroup.getGroupRole())).toList();
 
     }
 
@@ -92,7 +83,7 @@ public class GroupServiceImpl implements GroupService {
     public UserWithGroupRoleDto addUserToGroupList(String name, UserWithGroupRoleDto userWithGroupRoleDto) {
         // Get Database References
         Group dbGroup = groupRepository.findById(name).orElseThrow();
-        User dbUser = userRepository.findById(userWithGroupRoleDto.user().userName()).orElseThrow();
+        User dbUser = userRepository.findById(userWithGroupRoleDto.username()).orElseThrow();
 
         // Create new Entity
         UserToGroup userToGroup = new UserToGroup(dbUser, dbGroup, userWithGroupRoleDto.groupRole());
@@ -104,17 +95,17 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public UserWithGroupRoleDto updateUserFromGroup(String name, String username, UserWithGroupRoleDto userWithGroupRoleDto) {
+    public UserWithGroupRoleDto updateUserFromGroup(String name, String username, UpdateUserWithGroupRoleDto updateUserWithGroupRoleDto) {
         // Get Database References
         UserToGroupId userToGroupId = new UserToGroupId(username, name);
         UserToGroup dbUserToGroup = userToGroupRepository.findById(userToGroupId).orElseThrow();
 
         // Update Values
-        dbUserToGroup.setGroupRole(userWithGroupRoleDto.groupRole());
+        dbUserToGroup.setGroupRole(updateUserWithGroupRoleDto.groupRole());
 
         // Save
         userToGroupRepository.save(dbUserToGroup);
-        return userWithGroupRoleDto;
+        return new UserWithGroupRoleDto(username, updateUserWithGroupRoleDto.groupRole());
     }
 
     @Override
@@ -150,13 +141,13 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupToApiDto updateApiIdFromGroup(String name, Integer apiId, GroupToApiDto groupToApiDto) {
+    public GroupToApiDto updateApiIdFromGroup(String name, Integer apiId, UpdateGroupToApiDto updateGroupToApiDto) {
         // Get Database References
         GroupToApiId groupToApiId = new GroupToApiId(apiId, name);
         GroupToApi dbGroupToApi = groupToApiRepository.findById(groupToApiId).orElseThrow();
 
         // Update Values
-        dbGroupToApi.setActive(groupToApiDto.active());
+        dbGroupToApi.setActive(updateGroupToApiDto.active());
 
         // Save
         groupToApiRepository.save(dbGroupToApi);

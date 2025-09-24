@@ -1,9 +1,7 @@
 package thm.gromokoso.usermanagement.service;
 
 import org.springframework.stereotype.Service;
-import thm.gromokoso.usermanagement.dto.GroupToApiDto;
-import thm.gromokoso.usermanagement.dto.UserWithGroupRoleDto;
-import thm.gromokoso.usermanagement.dto.GroupDto;
+import thm.gromokoso.usermanagement.dto.*;
 
 import java.util.List;
 
@@ -32,11 +30,11 @@ public interface GroupService {
 
     /**
      * Updates the group data of the group identified by the given name with the data given in the group parameter.
-     * @param group Object representation of the data which shall be saved.
      * @param name Unique identifier of the group data.
+     * @param group Object representation of the data which shall be saved.
      * @return Group object if successful, null if failed.
      */
-    GroupDto updateGroupByGroupName(GroupDto group, String name);
+    GroupDto updateGroupByGroupName(String name, UpdateGroupDto group);
 
     /**
      * Deletes the saved Group data of the Group with the given name.
@@ -64,7 +62,7 @@ public interface GroupService {
      * @param username Unique identifier of the user data.
      * @param userWithGroupRoleDto Dataset of a User and an EGroupRole.
      */
-    UserWithGroupRoleDto updateUserFromGroup(String name, String username, UserWithGroupRoleDto userWithGroupRoleDto);
+    UserWithGroupRoleDto updateUserFromGroup(String name, String username, UpdateUserWithGroupRoleDto userWithGroupRoleDto);
 
     /**
      * Deletes a User from a group so that he is no longer a members and no longer has access to the corresponding tool.
@@ -94,7 +92,7 @@ public interface GroupService {
      * @param apiId Unique identifier of an API.
      * @param groupToApiDto Dataset containing the new Data of the API.
      */
-    GroupToApiDto updateApiIdFromGroup(String name, Integer apiId, GroupToApiDto groupToApiDto);
+    GroupToApiDto updateApiIdFromGroup(String name, Integer apiId, UpdateGroupToApiDto groupToApiDto);
 
     /**
      * Deletes an API ID from a group so that the group and it's members no longer have access to the corresponding tool.

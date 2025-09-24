@@ -78,7 +78,7 @@ public interface UserManagementController {
                     content = @Content)}
     )
     @GetMapping("/users/{username}/apis")
-    List<UserToApiDto> getApis(@PathVariable String username);
+    List<UserToApiDto> getApis(@PathVariable String username, @RequestParam boolean accessByGroups);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "API ID for User successfully added.",
@@ -117,12 +117,12 @@ public interface UserManagementController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All Groups of User with their Role in the group successfully returned.",
                     content = { @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = GroupWithGroupRole.class)))}),
+                            array = @ArraySchema(schema = @Schema(implementation = GroupWithGroupRoleDto.class)))}),
             @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Invalid Username",
                     content = @Content)}
     )
     @GetMapping("/users/{username}/groups")
-    List<GroupWithGroupRole> getGroups(@PathVariable String username);
+    List<GroupWithGroupRoleDto> getGroups(@PathVariable String username);
 }

@@ -5,24 +5,26 @@ import org.springframework.stereotype.Service;
 import thm.gromokoso.usermanagement.dto.GroupDto;
 import thm.gromokoso.usermanagement.dto.UserDto;
 import thm.gromokoso.usermanagement.dto.UserToApiDto;
-import thm.gromokoso.usermanagement.entity.User;
-import thm.gromokoso.usermanagement.entity.UserToApi;
-import thm.gromokoso.usermanagement.entity.UserToApiId;
-import thm.gromokoso.usermanagement.entity.UserToGroup;
-import thm.gromokoso.usermanagement.dto.GroupWithGroupRole;
-import thm.gromokoso.usermanagement.repository.UserRepository;
-import thm.gromokoso.usermanagement.repository.UserToApiRepository;
+import thm.gromokoso.usermanagement.entity.*;
+import thm.gromokoso.usermanagement.dto.GroupWithGroupRoleDto;
+import thm.gromokoso.usermanagement.repository.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserToApiRepository userToApiRepository;
+    private final UserToGroupRepository userToGroupRepository;
+    private final GroupRepository groupRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserToApiRepository userToApiRepository) { this.userRepository = userRepository; this.userToApiRepository = userToApiRepository; }
+    public UserServiceImpl(UserRepository userRepository, UserToApiRepository userToApiRepository, UserToGroupRepository userToGroupRepository, GroupRepository groupRepository) {
+        this.userRepository = userRepository;
+        this.userToApiRepository = userToApiRepository;
+        this.userToGroupRepository = userToGroupRepository;
+        this.groupRepository = groupRepository;
+    }
 
     @Override
     public UserDto saveUser(UserDto user) {
@@ -85,13 +87,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<UserToApiDto> fetchApiListFromUser(String username) {
+    public List<UserToApiDto> fetchApiListFromUser(String username, boolean accessViaGroup) {
         List<UserToApiDto> userToApiDtoList = new ArrayList<>();
         User dbUser = userRepository.findByIdWithApis(username).orElseThrow();
         List<UserToApi> apiAccesses = dbUser.getApiAccesses();
         for (UserToApi userToApi : apiAccesses) {
-            userToApiDtoList.add(new UserToApiDto(userToApi.getId().getApiId(), userToApi.isActive()));
+            userToApiDtoList.add(new UserToApiDto(userToApi.getId().getApiId(), "user", userToApi.isActive()));
         }
+
+        // Add API ID's from groups which the user is part of
+        if (accessViaGroup) {
+            List<UserToGroup> userToGroupList = userToGroupRepository.findByUser_UserName(username);
+            for (UserToGroup userToGroup : userToGroupList) {
+                Group dbGroup = groupRepository.findByIdWithApis(userToGroup.getGroup().getGroupName()).orElseThrow();
+                for (GroupToApi groupToApi : dbGroup.getApiAccesses()) {
+                    // Check whether API ID is already in an UserToApiAccess Object in List or if Group Access is active while user access in inactive
+                    boolean newApiAccess = userToApiDtoList.stream().noneMatch(userToApiDto -> userToApiDto.apiId().equals(groupToApi.getId().getApiId()));
+                    Optional<UserToApiDto> inactiveUserToApiDto = userToApiDtoList.stream().filter(userToApiDto -> userToApiDto.apiId().equals(groupToApi.getId().getApiId()) && !userToApiDto.active() && groupToApi.isActive()).findFirst();
+
+                    if (newApiAccess)
+                    {
+                        userToApiDtoList.add(new UserToApiDto(groupToApi.getId().getApiId(), dbGroup.getGroupName(), groupToApi.isActive()));
+                    } else if (inactiveUserToApiDto.isPresent()) {
+                        // Overwrite inactive access from User with active access granted via Group
+                        userToApiDtoList.remove(inactiveUserToApiDto.get());
+                        userToApiDtoList.add(new UserToApiDto(groupToApi.getId().getApiId(), dbGroup.getGroupName(), true));
+                    }
+                }
+            }
+        }
+
         return userToApiDtoList;
     }
 
@@ -123,17 +148,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<GroupWithGroupRole> fetchGroupListFromUser(String username) {
-        List<GroupWithGroupRole> groupWithGroupRoleList = new ArrayList<>();
+    public List<GroupWithGroupRoleDto> fetchGroupListFromUser(String username) {
+        List<GroupWithGroupRoleDto> groupWithGroupRoleDtoList = new ArrayList<>();
         User dbUser = userRepository.findById(username).orElseThrow();
         List<UserToGroup> userToGroupList = dbUser.getGroupMappings();
         for (UserToGroup userToGroup : userToGroupList) {
-            groupWithGroupRoleList.add(new GroupWithGroupRole(new GroupDto(userToGroup.getGroup().getGroupName(),
+            groupWithGroupRoleDtoList.add(new GroupWithGroupRoleDto(new GroupDto(userToGroup.getGroup().getGroupName(),
                     userToGroup.getGroup().getDescription(),
                     userToGroup.getGroup().getType()),
                     userToGroup.getGroupRole()));
         }
-        return groupWithGroupRoleList;
+        return groupWithGroupRoleDtoList;
     }
 
     private UserDto convertUserToUserDto(User user) {

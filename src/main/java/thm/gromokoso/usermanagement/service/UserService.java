@@ -2,7 +2,7 @@ package thm.gromokoso.usermanagement.service;
 
 import org.springframework.stereotype.Service;
 import thm.gromokoso.usermanagement.dto.UserDto;
-import thm.gromokoso.usermanagement.dto.GroupWithGroupRole;
+import thm.gromokoso.usermanagement.dto.GroupWithGroupRoleDto;
 import thm.gromokoso.usermanagement.dto.UserToApiDto;
 
 import java.util.List;
@@ -55,9 +55,10 @@ public interface UserService {
     /**
      * Returns a list of all API IDs of which grants the user access to the corresponding tools.
      * @param username Unique identifier of the user data.
+     * @param accessViaGroup Whether the request should also return API ID's for which the user has access because of the membership of a group.
      * @return List of API IDs and whether their active if successful, null if no user with this ID is saved.
      */
-    List<UserToApiDto> fetchApiListFromUser(String username);
+    List<UserToApiDto> fetchApiListFromUser(String username, boolean accessViaGroup);
 
     /**
      * Deletes an API ID from a user so that the user no longer has access to the corresponding tool.
@@ -79,5 +80,5 @@ public interface UserService {
      * @param username Unique identifier of the user data.
      * @return List of groups with the corresponding user role.
      */
-    List<GroupWithGroupRole> fetchGroupListFromUser(String username);
+    List<GroupWithGroupRoleDto> fetchGroupListFromUser(String username);
 }

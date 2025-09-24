@@ -2,11 +2,8 @@ package thm.gromokoso.usermanagement.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import thm.gromokoso.usermanagement.dto.GroupDto;
-import thm.gromokoso.usermanagement.dto.UserDto;
-import thm.gromokoso.usermanagement.dto.UserToApiDto;
+import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.entity.*;
-import thm.gromokoso.usermanagement.dto.GroupWithGroupRoleDto;
 import thm.gromokoso.usermanagement.repository.*;
 
 import java.util.*;
@@ -50,15 +47,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto updateUser(UserDto user, String username) {
+    public UserDto updateUser(String username, UpdateUserDto updateUserDto) {
         // Get Database References
         User dbUser = userRepository.findById(username).orElseThrow();
 
         // Update Values
-        dbUser.setFirstName(user.firstName());
-        dbUser.setLastName(user.lastName());
-        dbUser.setEmail(user.email());
-        dbUser.setSystemRole(user.systemRole());
+        dbUser.setFirstName(updateUserDto.firstName());
+        dbUser.setLastName(updateUserDto.lastName());
+        dbUser.setEmail(updateUserDto.email());
+        dbUser.setSystemRole(updateUserDto.systemRole());
 
         // Save
         userRepository.save(dbUser);
@@ -122,7 +119,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserToApiDto updateApiFromUser(String username, Integer apiId,  UserToApiDto userToApiDto) {
+    public UserToApiDto updateApiFromUser(String username, Integer apiId,  UpdateUserToApiDto userToApiDto) {
         // Get Database References
         UserToApiId userToApiId = new UserToApiId(apiId, username);
         UserToApi userToApi = userToApiRepository.findById(userToApiId).orElseThrow();
@@ -132,7 +129,7 @@ public class UserServiceImpl implements UserService {
 
         // Save
         userToApiRepository.save(userToApi);
-        return userToApiDto;
+        return new UserToApiDto(userToApi.getId().getApiId(), "user", userToApi.isActive());
     }
 
     @Override
@@ -153,10 +150,7 @@ public class UserServiceImpl implements UserService {
         User dbUser = userRepository.findById(username).orElseThrow();
         List<UserToGroup> userToGroupList = dbUser.getGroupMappings();
         for (UserToGroup userToGroup : userToGroupList) {
-            groupWithGroupRoleDtoList.add(new GroupWithGroupRoleDto(new GroupDto(userToGroup.getGroup().getGroupName(),
-                    userToGroup.getGroup().getDescription(),
-                    userToGroup.getGroup().getType()),
-                    userToGroup.getGroupRole()));
+            groupWithGroupRoleDtoList.add(new GroupWithGroupRoleDto(userToGroup.getGroup().getGroupName(), userToGroup.getGroupRole()));
         }
         return groupWithGroupRoleDtoList;
     }

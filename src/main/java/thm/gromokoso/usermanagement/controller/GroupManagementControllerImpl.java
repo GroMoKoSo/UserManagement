@@ -1,9 +1,7 @@
 package thm.gromokoso.usermanagement.controller;
 
 import org.springframework.web.bind.annotation.*;
-import thm.gromokoso.usermanagement.dto.GroupDto;
-import thm.gromokoso.usermanagement.dto.UserWithGroupRoleDto;
-import thm.gromokoso.usermanagement.dto.GroupToApiDto;
+import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.service.GroupService;
 
 
@@ -26,7 +24,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     public GroupDto getGroup(@PathVariable String name) { return groupService.getGroupByGroupName(name); }
 
     @Override
-    public GroupDto updateGroup(@PathVariable String name, @RequestBody GroupDto group) { return groupService.updateGroupByGroupName(group, name); }
+    public GroupDto updateGroup(@PathVariable String name, @RequestBody UpdateGroupDto group) { return groupService.updateGroupByGroupName(name, group); }
 
     @Override
     public void deleteGroup(@PathVariable String name) { groupService.deleteGroupByGroupName(name); }
@@ -38,7 +36,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     public GroupToApiDto addApiIdToGroup(@PathVariable String name, @RequestBody GroupToApiDto groupToApiDto) { return groupService.addApiIdToGroup(name, groupToApiDto); }
 
     @Override
-    public GroupToApiDto updateApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id, @RequestBody GroupToApiDto groupToApiDto) { return groupService.updateApiIdFromGroup(name, api_id, groupToApiDto); }
+    public GroupToApiDto updateApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id, @RequestBody UpdateGroupToApiDto groupToApiDto) { return groupService.updateApiIdFromGroup(name, api_id, groupToApiDto); }
 
     @Override
     public void deleteApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id) { groupService.deleteApiIdFromGroup(name, api_id); }
@@ -50,7 +48,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     public UserWithGroupRoleDto addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRoleDto userWithGroupRoleDto) { return groupService.addUserToGroupList(name, userWithGroupRoleDto); }
 
     @Override
-    public UserWithGroupRoleDto updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UserWithGroupRoleDto userWithGroupRoleDto) { return groupService.updateUserFromGroup(name, username, userWithGroupRoleDto); }
+    public UserWithGroupRoleDto updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UpdateUserWithGroupRoleDto userWithGroupRoleDto) { return groupService.updateUserFromGroup(name, username, userWithGroupRoleDto); }
 
     @Override
     public void deleteUserFromGroup(@PathVariable String name, @PathVariable String username) { groupService.deleteUserFromGroup(name, username); }

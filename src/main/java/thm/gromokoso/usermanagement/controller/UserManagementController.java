@@ -56,7 +56,7 @@ public interface UserManagementController {
                     content = @Content)}
     )
     @PutMapping("/users/{username}")
-    UserDto updateUser(@PathVariable String username, @RequestBody UserDto user);
+    UserDto updateUser(@PathVariable String username, @RequestBody UpdateUserDto user);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User was successfully deleted."),
@@ -102,7 +102,7 @@ public interface UserManagementController {
                     content = @Content)}
     )
     @PutMapping("users/{username}/apis/{api_id}")
-    UserToApiDto updateApi(@PathVariable String username, @PathVariable Integer api_id, @RequestBody UserToApiDto userToApiDto);
+    UserToApiDto updateApi(@PathVariable String username, @PathVariable Integer api_id, @RequestBody UpdateUserToApiDto userToApiDto);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "API ID from User successfully deleted."),

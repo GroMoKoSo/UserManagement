@@ -7,9 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
-import thm.gromokoso.usermanagement.dto.GroupDto;
-import thm.gromokoso.usermanagement.dto.GroupToApiDto;
-import thm.gromokoso.usermanagement.dto.UserWithGroupRoleDto;
+import thm.gromokoso.usermanagement.dto.*;
 
 import java.util.List;
 
@@ -58,7 +56,7 @@ public interface GroupManagementController {
                     content = @Content)}
     )
     @PutMapping("/groups/{name}")
-    GroupDto updateGroup(@PathVariable String name, @RequestBody GroupDto group);
+    GroupDto updateGroup(@PathVariable String name, @RequestBody UpdateGroupDto group);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Group was successfully deleted."),
@@ -105,7 +103,7 @@ public interface GroupManagementController {
                     content = @Content)}
     )
     @PutMapping("/groups/{name}/apis/{api_id}")
-    GroupToApiDto updateApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id, @RequestBody GroupToApiDto groupToApiDto);
+    GroupToApiDto updateApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id, @RequestBody UpdateGroupToApiDto groupToApiDto);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "API ID from Group successfully deleted."),
@@ -151,7 +149,7 @@ public interface GroupManagementController {
                     content = @Content)}
     )
     @PutMapping("/groups/{name}/users/{username}")
-    UserWithGroupRoleDto updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UserWithGroupRoleDto userWithGroupRoleDto);
+    UserWithGroupRoleDto updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UpdateUserWithGroupRoleDto userWithGroupRoleDto);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User from Group successfully deleted."),

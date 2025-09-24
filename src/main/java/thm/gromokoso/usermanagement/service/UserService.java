@@ -1,9 +1,7 @@
 package thm.gromokoso.usermanagement.service;
 
 import org.springframework.stereotype.Service;
-import thm.gromokoso.usermanagement.dto.UserDto;
-import thm.gromokoso.usermanagement.dto.GroupWithGroupRoleDto;
-import thm.gromokoso.usermanagement.dto.UserToApiDto;
+import thm.gromokoso.usermanagement.dto.*;
 
 import java.util.List;
 
@@ -32,11 +30,11 @@ public interface UserService {
 
     /**
      * Updates the user data of the user identified by the given username with the data given in the user parameter.
-     * @param user Object representation of the data which shall be saved.
      * @param username Unique identifier of the user data.
+     * @param user Object representation of the data which shall be saved.
      * @return User object if successful, null if failed.
      */
-    UserDto updateUser(UserDto user, String username);
+    UserDto updateUser( String username, UpdateUserDto user);
 
     /**
      * Deletes the saved User data of the User with the given ID.
@@ -66,7 +64,7 @@ public interface UserService {
      * @param apiId Unique identifier of an API.
      * @param userToApiIdDto Dataset of the API which should be updated from the User including ID and whether its active.
      */
-    UserToApiDto updateApiFromUser(String username, Integer apiId, UserToApiDto userToApiIdDto);
+    UserToApiDto updateApiFromUser(String username, Integer apiId, UpdateUserToApiDto userToApiIdDto);
 
     /**
      * Deletes an API ID from a user so that the user no longer has access to the corresponding tool.

@@ -19,19 +19,21 @@ public class McpManagementClient {
                                @Value("${spring.subservices.mcp-management.url}") String baseUrl) {
         this.tokenProvider = tokenProvider;
         this.baseUrl = baseUrl;
-        this.client = RestClient.create();
+        this.client = RestClient.builder().baseUrl(baseUrl).build();
     }
 
     public void notifyAboutChangedToolSets(String username, List<Integer> apiIds) {
         try {
             var response = client.post()
-                    .uri(baseUrl + "\"/users/{id}/toolsets/list-changed\"", username)
+                    .uri("/users/{id}/toolsets/list-changed", username)
                     .header("Authorization", "Bearer " + tokenProvider.getToken())
                     .body(apiIds)
                     .retrieve();
-            System.out.println("Client Class: Notify About Changed Tool Sets: " + response);
+            System.out.println("Client Class: Notify About Changed Tool Sets: " + response.toEntity(String.class).getStatusCode());
         } catch (AuthenticationException ae) {
-            System.out.println("Client Class: Notify About Changed Tool Sets ERROR: " + ae);
+            System.out.println("Client Class: Notify About Changed Tool Sets AUTHENTIFICATION ERROR: " + ae);
+        } catch (Exception e) {
+            System.out.println("Client Class: Notify About Changed Tool Sets STANDARD ERROR: " + e);
         }
     }
 }

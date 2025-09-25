@@ -1,6 +1,10 @@
 spring:
   application:
     name: usermanagement
+
+  subservices:
+    mcp-management.url: http://gromokoso-mcpmanagement:8080
+
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -15,6 +19,14 @@ spring:
         dialect: org.hibernate.dialect.MariaDBDialect
     show-sql: true
     open-in-view: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://zdh-swa-muenker.zdh.thm.de/keycloak/realms/swa2025
+          jwk-set-uri: https://zdh-swa-muenker.zdh.thm.de/keycloak/realms/swa2025/protocol/openid-connect/certs
+    realm: swa2025
 
 server:
   port: 8080

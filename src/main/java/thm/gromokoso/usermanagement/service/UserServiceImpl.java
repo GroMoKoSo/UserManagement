@@ -1,7 +1,9 @@
 package thm.gromokoso.usermanagement.service;
 
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import thm.gromokoso.usermanagement.client.McpManagementClient;
 import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.entity.*;
 import thm.gromokoso.usermanagement.repository.*;
@@ -15,12 +17,14 @@ public class UserServiceImpl implements UserService {
     private final UserToApiRepository userToApiRepository;
     private final UserToGroupRepository userToGroupRepository;
     private final GroupRepository groupRepository;
+    @Autowired private final McpManagementClient mcpManagementClient;
 
-    public UserServiceImpl(UserRepository userRepository, UserToApiRepository userToApiRepository, UserToGroupRepository userToGroupRepository, GroupRepository groupRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserToApiRepository userToApiRepository, UserToGroupRepository userToGroupRepository, GroupRepository groupRepository, McpManagementClient mcpManagementClient) {
         this.userRepository = userRepository;
         this.userToApiRepository = userToApiRepository;
         this.userToGroupRepository = userToGroupRepository;
         this.groupRepository = groupRepository;
+        this.mcpManagementClient = mcpManagementClient;
     }
 
     @Override
@@ -79,6 +83,9 @@ public class UserServiceImpl implements UserService {
 
         // Save
         userToApiRepository.save(userToApi);
+
+        // Notify MCP Management
+        sendNotifyUpdatedToolsToMcpClient(username);
         return userToApiIdDto;
     }
 
@@ -129,6 +136,9 @@ public class UserServiceImpl implements UserService {
 
         // Save
         userToApiRepository.save(userToApi);
+
+        // Notify MCP Management
+        sendNotifyUpdatedToolsToMcpClient(username);
         return new UserToApiDto(userToApi.getId().getApiId(), "user", userToApi.isActive());
     }
 
@@ -141,6 +151,9 @@ public class UserServiceImpl implements UserService {
         apiAccesses.stream().filter(
                         userToApi -> userToApi.getId().equals(userToApiId))
                 .findFirst().ifPresent(apiAccesses::remove);
+
+        // Notify MCP Management
+        sendNotifyUpdatedToolsToMcpClient(username);
     }
 
     @Override
@@ -153,6 +166,14 @@ public class UserServiceImpl implements UserService {
             groupWithGroupRoleDtoList.add(new GroupWithGroupRoleDto(userToGroup.getGroup().getGroupName(), userToGroup.getGroupRole()));
         }
         return groupWithGroupRoleDtoList;
+    }
+
+    private void sendNotifyUpdatedToolsToMcpClient(String username) {
+        List<Integer> apiIds = new ArrayList<>();
+        for (UserToApiDto userToApiDto : fetchApiListFromUser(username, true)) {
+            apiIds.add(userToApiDto.apiId());
+        }
+        mcpManagementClient.notifyAboutChangedToolSets(username, apiIds);
     }
 
     private UserDto convertUserToUserDto(User user) {

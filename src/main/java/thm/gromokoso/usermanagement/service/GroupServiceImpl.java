@@ -1,7 +1,9 @@
 package thm.gromokoso.usermanagement.service;
 
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import thm.gromokoso.usermanagement.client.McpManagementClient;
 import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.entity.*;
 import thm.gromokoso.usermanagement.repository.GroupRepository;
@@ -19,12 +21,14 @@ public class GroupServiceImpl implements GroupService {
     private final UserRepository userRepository;
     private final UserToGroupRepository userToGroupRepository;
     private final GroupToApiRepository groupToApiRepository;
+    @Autowired private final McpManagementClient mcpManagementClient;
 
-    public GroupServiceImpl(GroupRepository groupRepository, UserRepository userRepository, UserToGroupRepository userToGroupRepository, GroupToApiRepository groupToApiRepository) {
+    public GroupServiceImpl(GroupRepository groupRepository, UserRepository userRepository, UserToGroupRepository userToGroupRepository, GroupToApiRepository groupToApiRepository, McpManagementClient mcpManagementClient) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
         this.userToGroupRepository = userToGroupRepository;
         this.groupToApiRepository = groupToApiRepository;
+        this.mcpManagementClient = mcpManagementClient;
     }
 
     @Override
@@ -90,6 +94,9 @@ public class GroupServiceImpl implements GroupService {
 
         // Save
         userToGroupRepository.save(userToGroup);
+
+        // Notify MCP Management
+        sendNotifyUpdatedUserToolsToMcpClient(userWithGroupRoleDto.username());
         return userWithGroupRoleDto;
     }
 
@@ -111,7 +118,11 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public void deleteUserFromGroup(String name, String username) {
+        // Delete User from Group
         userToGroupRepository.deleteByUserUserNameAndGroupGroupName(username, name);
+
+        // Notify MCP Management
+        sendNotifyUpdatedUserToolsToMcpClient(username);
     }
 
     @Override
@@ -125,6 +136,9 @@ public class GroupServiceImpl implements GroupService {
 
         // Save
         groupToApiRepository.save(groupToApi);
+
+        // Notify MCP Management
+        sendNotifyUpdatedGroupToolsToMcpClient(name);
         return groupToApiDto;
     }
 
@@ -151,6 +165,9 @@ public class GroupServiceImpl implements GroupService {
 
         // Save
         groupToApiRepository.save(dbGroupToApi);
+
+        // Notify MCP Management
+        sendNotifyUpdatedGroupToolsToMcpClient(name);
         return new GroupToApiDto(dbGroupToApi.getId().getApiId(), dbGroupToApi.isActive());
     }
 
@@ -162,6 +179,25 @@ public class GroupServiceImpl implements GroupService {
         apiAccesses.stream().filter(
                         groupToApi -> groupToApi.getId().getApiId().equals(apiId))
                 .findFirst().ifPresent(apiAccesses::remove);
+
+        // Notify MCP Management
+        sendNotifyUpdatedGroupToolsToMcpClient(name);
+    }
+
+    private void sendNotifyUpdatedGroupToolsToMcpClient(String name) {
+        List<UserWithGroupRoleDto> users = fetchUserListFromGroup(name);
+        for (UserWithGroupRoleDto user: users) {
+            sendNotifyUpdatedUserToolsToMcpClient(user.username());
+        }
+    }
+
+    private void sendNotifyUpdatedUserToolsToMcpClient(String username) {
+        User dbUser = userRepository.findById(username).orElseThrow();
+        List<Integer> apiIds = new ArrayList<>();
+        for (UserToApi userToApi : dbUser.getApiAccesses()) {
+            apiIds.add(userToApi.getId().getApiId());
+        }
+        mcpManagementClient.notifyAboutChangedToolSets(username, apiIds);
     }
 
     private GroupDto convertGroupToGroupDto(Group group) {

@@ -24,8 +24,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://zdh-swa-muenker.zdh.thm.de/keycloak/realms/swa2025
-          jwk-set-uri: https://zdh-swa-muenker.zdh.thm.de/keycloak/realms/swa2025/protocol/openid-connect/certs
+          jwk-set-uri: http://gromokoso-keycloak:8080/realms/gromokoso/protocol/openid-connect/certs
     realm: swa2025
 
   mvc:

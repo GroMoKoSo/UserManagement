@@ -17,46 +17,46 @@ public interface UserManagementController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully returned all Users",
                     content = { @Content(mediaType = "application/json",
-                            array = @ArraySchema( schema = @Schema(implementation = UserDto.class)))}),
+                            array = @ArraySchema( schema = @Schema(implementation = UserWithSystemRoleDto.class)))}),
             @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
                     content = @Content)}
     )
     @GetMapping("/users")
-    List<UserDto> getUsers();
+    List<UserWithSystemRoleDto> getUsers();
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Added new User",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserDto.class)) }),
+                            schema = @Schema(implementation = UserWithSystemRoleDto.class)) }),
             @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
                     content = @Content)}
     )
     @PostMapping("/users")
-    UserDto addUser(@RequestBody UserDto user);
+    UserWithSystemRoleDto addUser(@RequestBody UserDto user);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found User",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserDto.class)) }),
+                            schema = @Schema(implementation = UserWithSystemRoleDto.class)) }),
             @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Invalid Username",
                     content = @Content)}
     )
     @GetMapping("/users/{username}")
-    UserDto getUser(@PathVariable String username);
+    UserWithSystemRoleDto getUser(@PathVariable String username);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Updated User",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserDto.class)) }),
+                            schema = @Schema(implementation = UserWithSystemRoleDto.class)) }),
             @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Invalid Username",
                     content = @Content)}
     )
     @PutMapping("/users/{username}")
-    UserDto updateUser(@PathVariable String username, @RequestBody UpdateUserDto user);
+    UserWithSystemRoleDto updateUser(@PathVariable String username, @RequestBody UpdateUserDto user);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User was successfully deleted."),

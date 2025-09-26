@@ -13,28 +13,29 @@ public interface UserService {
      * @param user Object representation of the data which shall be saved.
      * @return User object if successful, null if failed.
      */
-    UserDto saveUser(UserDto user);
+    UserWithSystemRoleDto saveUser(UserDto user);
 
     /**
      * Returns all saved User data within the user management.
      * @return List of all saved Users.
      */
-    List<UserDto> fetchUserList();
+    List<UserWithSystemRoleDto> fetchUserList();
 
     /**
      * Returns the saved User data of the User with the given username.
      * @param username Unique identifier of the user data.
      * @return User object if successful, null if no user with this username is saved.
      */
-    UserDto findUserByUserName(String username);
+    UserWithSystemRoleDto findUserByUserName(String username);
 
     /**
      * Updates the user data of the user identified by the given username with the data given in the user parameter.
      * @param username Unique identifier of the user data.
      * @param user Object representation of the data which shall be saved.
+     * @param canChangeSystemRole Whether the Requester has sufficient rights to change the system role of the user.
      * @return User object if successful, null if failed.
      */
-    UserDto updateUser( String username, UpdateUserDto user);
+    UserWithSystemRoleDto updateUser( String username, UpdateUserDto user, boolean canChangeSystemRole );
 
     /**
      * Deletes the saved User data of the User with the given ID.

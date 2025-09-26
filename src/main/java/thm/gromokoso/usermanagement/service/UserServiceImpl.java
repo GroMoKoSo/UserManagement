@@ -28,30 +28,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto saveUser(UserDto userDto) {
-        User dbUser = new User(userDto.userName(), userDto.firstName(), userDto.lastName(), userDto.email(), new ArrayList<>(), new ArrayList<>(), userDto.systemRole());
+    public UserWithSystemRoleDto saveUser(UserDto userDto) {
+        User dbUser = new User(userDto.userName(), userDto.firstName(), userDto.lastName(), userDto.email(), new ArrayList<>(), new ArrayList<>(), ESystemRole.MEMBER);
         userRepository.save(dbUser);
-        return userDto;
+        return convertUserToUserWithSystemRoleDto(dbUser);
     }
 
     @Override
-    public List<UserDto> fetchUserList() {
-        List<UserDto> userDtos = new ArrayList<>();
+    public List<UserWithSystemRoleDto> fetchUserList() {
+        List<UserWithSystemRoleDto> userWithSystemRoleDtos = new ArrayList<>();
         for (User user : userRepository.findAll()) {
-            userDtos.add(new UserDto(user.getUserName(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getSystemRole()));
+            userWithSystemRoleDtos.add(new UserWithSystemRoleDto(user.getUserName(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getSystemRole()));
         }
-        return userDtos;
+        return userWithSystemRoleDtos;
     }
 
     @Override
-    public UserDto findUserByUserName(String username) {
-        User user = userRepository.findById(username).orElseThrow();
-        return convertUserToUserDto(user);
+    public UserWithSystemRoleDto findUserByUserName(String username) {
+        User dbUser = userRepository.findById(username).orElseThrow();
+        return convertUserToUserWithSystemRoleDto(dbUser);
     }
 
     @Override
     @Transactional
-    public UserDto updateUser(String username, UpdateUserDto updateUserDto) {
+    public UserWithSystemRoleDto updateUser(String username, UpdateUserDto updateUserDto, boolean canChangeSystemRole) {
         // Get Database References
         User dbUser = userRepository.findById(username).orElseThrow();
 
@@ -59,11 +59,14 @@ public class UserServiceImpl implements UserService {
         dbUser.setFirstName(updateUserDto.firstName());
         dbUser.setLastName(updateUserDto.lastName());
         dbUser.setEmail(updateUserDto.email());
-        dbUser.setSystemRole(updateUserDto.systemRole());
+
+        if (canChangeSystemRole) {
+            dbUser.setSystemRole(updateUserDto.systemRole());
+        }
 
         // Save
         userRepository.save(dbUser);
-        return convertUserToUserDto(dbUser);
+        return convertUserToUserWithSystemRoleDto(dbUser);
     }
 
     @Override
@@ -175,7 +178,7 @@ public class UserServiceImpl implements UserService {
         mcpManagementClient.notifyAboutChangedToolSets(username, apiIds);
     }
 
-    private UserDto convertUserToUserDto(User user) {
-        return new UserDto(user.getUserName(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getSystemRole());
+    private UserWithSystemRoleDto convertUserToUserWithSystemRoleDto(User user) {
+        return new UserWithSystemRoleDto(user.getUserName(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getSystemRole());
     }
 }

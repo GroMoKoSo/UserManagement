@@ -25,7 +25,7 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public List<UserDto> getUsers() {
+    public List<UserWithSystemRoleDto> getUsers() {
         try {
             tokenProvider.getToken();
             return userService.fetchUserList();
@@ -36,13 +36,14 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public UserDto addUser(@RequestBody UserDto user) {
+    public UserWithSystemRoleDto addUser(@RequestBody UserDto userDto) {
         try {
-            String requestUser = tokenProvider.getUsernameFromToken();
+            String tokenUsername = tokenProvider.getUsernameFromToken();
+            UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (user.systemRole() == ESystemRole.ADMIN || user.userName().equals(requestUser)) {
-                return userService.saveUser(user);
+            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUsername.equals(userDto.userName())) {
+                return userService.saveUser(userDto);
             } else {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
@@ -52,14 +53,14 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public UserDto getUser(@PathVariable String username) {
+    public UserWithSystemRoleDto getUser(@PathVariable String username) {
         try {
-            String requestUser = tokenProvider.getUsernameFromToken();
-            UserDto user = userService.findUserByUserName(username);
+            String tokenUsername = tokenProvider.getUsernameFromToken();
+            UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (user.systemRole() == ESystemRole.ADMIN || user.userName().equals(requestUser)) {
-                return user;
+            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUser.userName().equals(username)) {
+                return tokenUser;
             } else {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
@@ -71,14 +72,14 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public UserDto updateUser(@PathVariable String username, @RequestBody UpdateUserDto updateUserDto) {
+    public UserWithSystemRoleDto updateUser(@PathVariable String username, @RequestBody UpdateUserDto updateUserDto) {
         try {
-            String requestUser = tokenProvider.getUsernameFromToken();
-            UserDto user = userService.findUserByUserName(username);
+            String tokenUsername = tokenProvider.getUsernameFromToken();
+            UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (user.systemRole() == ESystemRole.ADMIN || user.userName().equals(requestUser)) {
-                return userService.updateUser(username, updateUserDto);
+            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUser.userName().equals(username)) {
+                return userService.updateUser(username, updateUserDto, tokenUser.systemRole() == ESystemRole.ADMIN);
             } else {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
@@ -92,11 +93,11 @@ public class UserManagementControllerImpl implements UserManagementController {
     @Override
     public void deleteUser(@PathVariable String username) {
         try {
-            String requestUser = tokenProvider.getUsernameFromToken();
-            UserDto user = userService.findUserByUserName(username);
+            String tokenUsername = tokenProvider.getUsernameFromToken();
+            UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (user.systemRole() == ESystemRole.ADMIN || user.userName().equals(requestUser)) {
+            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUser.userName().equals(username)) {
                 userService.deleteUserByUserName(username);
             } else {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
@@ -111,11 +112,11 @@ public class UserManagementControllerImpl implements UserManagementController {
     @Override
     public List<UserToApiDto> getApis(@PathVariable String username, @RequestParam(required = false, defaultValue = "true") boolean accessViaGroup) {
         try {
-            String requestUser = tokenProvider.getUsernameFromToken();
-            UserDto user = userService.findUserByUserName(username);
+            String tokenUsername = tokenProvider.getUsernameFromToken();
+            UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (user.systemRole() == ESystemRole.ADMIN || user.userName().equals(requestUser)) {
+            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUser.userName().equals(username)) {
                 return userService.fetchApiListFromUser(username, accessViaGroup);
             } else {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
@@ -130,11 +131,11 @@ public class UserManagementControllerImpl implements UserManagementController {
     @Override
     public UserToApiDto addApis(@PathVariable String username, @RequestBody UserToApiDto userToApiDto) {
         try {
-            String requestUser = tokenProvider.getUsernameFromToken();
-            UserDto user = userService.findUserByUserName(username);
+            String tokenUsername = tokenProvider.getUsernameFromToken();
+            UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (user.userName().equals(requestUser)) {
+            if (tokenUser.userName().equals(username)) {
                 return userService.addApiToUser(username, userToApiDto);
             } else {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
@@ -149,11 +150,11 @@ public class UserManagementControllerImpl implements UserManagementController {
     @Override
     public UserToApiDto updateApi(@PathVariable String username, @PathVariable Integer api_id, @RequestBody UpdateUserToApiDto userToApiDto) {
         try {
-            String requestUser = tokenProvider.getUsernameFromToken();
-            UserDto user = userService.findUserByUserName(username);
+            String tokenUsername = tokenProvider.getUsernameFromToken();
+            UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (user.userName().equals(requestUser)) {
+            if (tokenUser.userName().equals(username)) {
                 return userService.updateApiFromUser(username, api_id, userToApiDto);
             } else {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
@@ -168,11 +169,11 @@ public class UserManagementControllerImpl implements UserManagementController {
     @Override
     public void deleteApi(@PathVariable String username, @PathVariable Integer api_id) {
         try {
-            String requestUser = tokenProvider.getUsernameFromToken();
-            UserDto user = userService.findUserByUserName(username);
+            String tokenUsername = tokenProvider.getUsernameFromToken();
+            UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (user.userName().equals(requestUser)) {
+            if (tokenUser.userName().equals(username)) {
                 userService.deleteApiIdFromUser(username, api_id);
             } else {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
@@ -187,11 +188,11 @@ public class UserManagementControllerImpl implements UserManagementController {
     @Override
     public List<GroupWithGroupRoleDto> getGroups(@PathVariable String username) {
         try {
-            String requestUser = tokenProvider.getUsernameFromToken();
-            UserDto user = userService.findUserByUserName(username);
+            String tokenUsername = tokenProvider.getUsernameFromToken();
+            UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (user.systemRole() == ESystemRole.ADMIN || user.userName().equals(requestUser)) {
+            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUser.userName().equals(username)) {
                 return userService.fetchGroupListFromUser(username);
             } else {
                 throw new NotAuthorizedException("You do not have permission to access this user!");

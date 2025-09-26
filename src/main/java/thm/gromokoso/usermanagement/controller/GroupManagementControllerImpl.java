@@ -32,8 +32,9 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     @Override
     public List<GroupDto> getGroups() {
         try {
-            tokenProvider.getToken();
-            return groupService.fetchGroupList();
+            ESystemRole systemRole = getSystemRoleOfRequester();
+
+            return groupService.fetchGroupList(systemRole == ESystemRole.ADMIN);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         }

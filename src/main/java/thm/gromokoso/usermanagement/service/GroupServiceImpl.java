@@ -40,9 +40,18 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupDto> fetchGroupList() {
+    public List<GroupDto> fetchGroupList(boolean privateVisibility) {
         List<GroupDto> groupList = new ArrayList<>();
-        groupRepository.findAll().forEach(group -> groupList.add(convertGroupToGroupDto(group)));
+        List<Group> dbGroups = groupRepository.findAll();
+        for (Group dbGroup : dbGroups) {
+            if (dbGroup.getType() == EGroupType.PRIVATE) {
+                if (privateVisibility) {
+                    groupList.add(convertGroupToGroupDto(dbGroup));
+                }
+            } else {
+                groupList.add(convertGroupToGroupDto(dbGroup));
+            }
+        }
         return groupList;
     }
 

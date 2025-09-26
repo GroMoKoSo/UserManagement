@@ -17,9 +17,10 @@ public interface GroupService {
 
     /**
      * Returns all saved Group data within the user management.
+     * @param privateVisibility Whether groups with the attribute visibility = private should be fetched.
      * @return List of all saved Groups.
      */
-    List<GroupDto> fetchGroupList();
+    List<GroupDto> fetchGroupList(boolean privateVisibility);
 
     /**
      * Returns the saved Group data of the Group with the given name.

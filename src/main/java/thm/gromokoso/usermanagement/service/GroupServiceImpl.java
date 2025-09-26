@@ -33,10 +33,10 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupDto saveGroup(GroupDto group) {
-        Group dbGroup = new Group(group.name(), group.description(), new ArrayList<>(), new ArrayList<>(), group.visibility());
+    public GroupDto saveGroup(GroupDto groupDto) {
+        Group dbGroup = new Group(groupDto.name(), groupDto.description(), new ArrayList<>(), new ArrayList<>(), groupDto.visibility());
         groupRepository.save(dbGroup);
-        return group;
+        return groupDto;
     }
 
     @Override
@@ -70,12 +70,14 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public void deleteGroupByGroupName(String name) {
+        groupRepository.findById(name).orElseThrow();
         groupRepository.deleteById(name);
     }
 
     @Override
     @Transactional
     public List<UserWithGroupRoleDto> fetchUserListFromGroup(String name) {
+        groupRepository.findById(name).orElseThrow();
         return userToGroupRepository.findByGroup_GroupName(name).stream()
                 .map(userToGroup ->
                     new UserWithGroupRoleDto(userToGroup.getUser().getUserName(), userToGroup.getGroupRole())).toList();
@@ -118,6 +120,8 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public void deleteUserFromGroup(String name, String username) {
+        userToGroupRepository.findById(new UserToGroupId(username, name)).orElseThrow();
+
         // Delete User from Group
         userToGroupRepository.deleteByUserUserNameAndGroupGroupName(username, name);
 
@@ -174,11 +178,9 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public void deleteApiIdFromGroup(String name, Integer apiId) {
-        Group dbGroup = groupRepository.findById(name).orElseThrow();
-        List<GroupToApi> apiAccesses = dbGroup.getApiAccesses();
-        apiAccesses.stream().filter(
-                        groupToApi -> groupToApi.getId().getApiId().equals(apiId))
-                .findFirst().ifPresent(apiAccesses::remove);
+        GroupToApiId groupToApiId = new GroupToApiId(apiId, name);
+        GroupToApi dbGroupToApi = groupToApiRepository.findById(groupToApiId).orElseThrow();
+        groupToApiRepository.delete(dbGroupToApi);
 
         // Notify MCP Management
         sendNotifyUpdatedGroupToolsToMcpClient(name);

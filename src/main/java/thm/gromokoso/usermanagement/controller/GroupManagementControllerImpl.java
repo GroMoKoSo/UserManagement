@@ -2,54 +2,280 @@ package thm.gromokoso.usermanagement.controller;
 
 import org.springframework.web.bind.annotation.*;
 import thm.gromokoso.usermanagement.dto.*;
+import thm.gromokoso.usermanagement.entity.EGroupRole;
+import thm.gromokoso.usermanagement.entity.ESystemRole;
+import thm.gromokoso.usermanagement.exception.InvalidTokenException;
+import thm.gromokoso.usermanagement.exception.NotAuthorizedException;
+import thm.gromokoso.usermanagement.exception.ResourceNotFoundException;
+import thm.gromokoso.usermanagement.security.TokenProvider;
 import thm.gromokoso.usermanagement.service.GroupService;
+import thm.gromokoso.usermanagement.service.UserService;
 
 
+import javax.security.sasl.AuthenticationException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 public class GroupManagementControllerImpl implements GroupManagementController {
 
+    private final TokenProvider tokenProvider;
     private final GroupService groupService;
+    private final UserService userService;
 
-    GroupManagementControllerImpl(GroupService groupService) { this.groupService = groupService; }
-
-    @Override
-    public List<GroupDto> getGroups() { return groupService.fetchGroupList(); }
-
-    @Override
-    public GroupDto addGroup(@RequestBody GroupDto group) { return groupService.saveGroup(group); }
-
-    @Override
-    public GroupDto getGroup(@PathVariable String name) { return groupService.getGroupByGroupName(name); }
+    GroupManagementControllerImpl(TokenProvider tokenprovider, GroupService groupService, UserService userService) {
+        this.tokenProvider = tokenprovider;
+        this.groupService = groupService;
+        this.userService = userService;
+    }
 
     @Override
-    public GroupDto updateGroup(@PathVariable String name, @RequestBody UpdateGroupDto group) { return groupService.updateGroupByGroupName(name, group); }
+    public List<GroupDto> getGroups() {
+        try {
+            tokenProvider.getToken();
+            return groupService.fetchGroupList();
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        }
+    }
 
     @Override
-    public void deleteGroup(@PathVariable String name) { groupService.deleteGroupByGroupName(name); }
+    public GroupDto addGroup(@RequestBody GroupDto group) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+
+            // Check Permissions
+            if (systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to add a group!");
+            } else {
+                return groupService.saveGroup(group);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        }
+    }
 
     @Override
-    public List<GroupToApiDto> getApiIdsOfGroup(@PathVariable String name) { return groupService.fetchApiIdListFromGroup(name); }
+    public GroupDto getGroup(@PathVariable String name) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+            EGroupRole groupRole = getGroupRoleOfUser(name);
+
+            // Check Permissions
+            if (groupRole == null && systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to get information about this group!");
+            } else {
+                return groupService.getGroupByGroupName(name);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException e) {
+            throw new ResourceNotFoundException("Group not found!");
+        }
+    }
 
     @Override
-    public GroupToApiDto addApiIdToGroup(@PathVariable String name, @RequestBody GroupToApiDto groupToApiDto) { return groupService.addApiIdToGroup(name, groupToApiDto); }
+    public GroupDto updateGroup(@PathVariable String name, @RequestBody UpdateGroupDto updateGroupDto) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+            EGroupRole groupRole = getGroupRoleOfUser(name);
+
+            // Check Permissions
+            if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to edit this group!");
+            } else {
+                return groupService.updateGroupByGroupName(name, updateGroupDto);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException e) {
+            throw new ResourceNotFoundException("Group not found!");
+        }
+    }
 
     @Override
-    public GroupToApiDto updateApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id, @RequestBody UpdateGroupToApiDto groupToApiDto) { return groupService.updateApiIdFromGroup(name, api_id, groupToApiDto); }
+    public void deleteGroup(@PathVariable String name) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+            EGroupRole groupRole = getGroupRoleOfUser(name);
+
+            // Check Permissions
+            if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to delete this group!");
+            } else {
+                groupService.deleteGroupByGroupName(name);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException e) {
+            throw new ResourceNotFoundException("Group not found!");
+        }
+    }
 
     @Override
-    public void deleteApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id) { groupService.deleteApiIdFromGroup(name, api_id); }
+    public List<GroupToApiDto> getApiIdsOfGroup(@PathVariable String name) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+            EGroupRole groupRole = getGroupRoleOfUser(name);
+
+            // Check Permissions
+            if (groupRole == null && systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to get information about this group!");
+            } else {
+                return groupService.fetchApiIdListFromGroup(name);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException e) {
+            throw new ResourceNotFoundException("Group not found!");
+        }
+    }
 
     @Override
-    public List<UserWithGroupRoleDto> getUsersOfGroup(@PathVariable String name) { return groupService.fetchUserListFromGroup(name); }
+    public GroupToApiDto addApiIdToGroup(@PathVariable String name, @RequestBody GroupToApiDto groupToApiDto) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+            EGroupRole groupRole = getGroupRoleOfUser(name);
+
+            // Check Permissions
+            if (groupRole != EGroupRole.ADMIN && groupRole != EGroupRole.EDITOR && systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to add API's of this group!");
+            } else {
+                return groupService.addApiIdToGroup(name, groupToApiDto);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException e) {
+            throw new ResourceNotFoundException("Group not found!");
+        }
+    }
 
     @Override
-    public UserWithGroupRoleDto addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRoleDto userWithGroupRoleDto) { return groupService.addUserToGroupList(name, userWithGroupRoleDto); }
+    public GroupToApiDto updateApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id, @RequestBody UpdateGroupToApiDto groupToApiDto) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+            EGroupRole groupRole = getGroupRoleOfUser(name);
+
+            // Check Permissions
+            if (groupRole != EGroupRole.ADMIN && groupRole != EGroupRole.EDITOR && systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to edit API's of this group!");
+            } else {
+                return groupService.updateApiIdFromGroup(name, api_id, groupToApiDto);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException e) {
+            throw new ResourceNotFoundException("Group does not exist or does not have access to the API ID!");
+        }
+    }
 
     @Override
-    public UserWithGroupRoleDto updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UpdateUserWithGroupRoleDto userWithGroupRoleDto) { return groupService.updateUserFromGroup(name, username, userWithGroupRoleDto); }
+    public void deleteApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+            EGroupRole groupRole = getGroupRoleOfUser(name);
+
+            // Check Permissions
+            if (groupRole != EGroupRole.ADMIN && groupRole != EGroupRole.EDITOR && systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to delete API's of this group!");
+            } else {
+                groupService.deleteApiIdFromGroup(name, api_id);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException e) {
+            throw new ResourceNotFoundException("Group does not exist or does not have access to the API ID!");
+        }
+    }
 
     @Override
-    public void deleteUserFromGroup(@PathVariable String name, @PathVariable String username) { groupService.deleteUserFromGroup(name, username); }
+    public List<UserWithGroupRoleDto> getUsersOfGroup(@PathVariable String name) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+            EGroupRole groupRole = getGroupRoleOfUser(name);
+
+            // Check Permissions
+            if (groupRole == null && systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to get information about the users of this group!");
+            } else {
+                return groupService.fetchUserListFromGroup(name);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException e) {
+            throw new ResourceNotFoundException("Group not found!");
+        }
+    }
+
+    @Override
+    public UserWithGroupRoleDto addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRoleDto userWithGroupRoleDto) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+            EGroupRole groupRole = getGroupRoleOfUser(name);
+
+            // Check Permissions
+            if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to add users to this group!");
+            } else {
+                return groupService.addUserToGroupList(name, userWithGroupRoleDto);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException e) {
+            throw new ResourceNotFoundException("Group not found!");
+        }
+    }
+
+    @Override
+    public UserWithGroupRoleDto updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UpdateUserWithGroupRoleDto userWithGroupRoleDto) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+            EGroupRole groupRole = getGroupRoleOfUser(name);
+
+            // Check Permissions
+            if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to edit userdata to this group!");
+            } else {
+                return groupService.updateUserFromGroup(name, username, userWithGroupRoleDto);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException e) {
+            throw new ResourceNotFoundException("Group does not exist or user is not a Member!");
+        }
+    }
+
+    @Override
+    public void deleteUserFromGroup(@PathVariable String name, @PathVariable String username) {
+        try {
+            ESystemRole systemRole = getSystemRoleOfRequester();
+            EGroupRole groupRole = getGroupRoleOfUser(name);
+
+            // Check Permissions
+            if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to delete users from this group!");
+            } else {
+                groupService.deleteUserFromGroup(name, username);
+            }
+        } catch (AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException e) {
+            throw new ResourceNotFoundException("Group does not exist or user is not a Member!");
+        }
+    }
+
+    private EGroupRole getGroupRoleOfUser(String name) throws AuthenticationException {
+        String username = tokenProvider.getUsernameFromToken();
+        for (GroupWithGroupRoleDto groupWithGroupRoleDto : userService.fetchGroupListFromUser(username)) {
+            if (groupWithGroupRoleDto.groupName().equals(name)) {
+                return groupWithGroupRoleDto.role();
+            }
+        }
+
+        return null;
+    }
+
+    private ESystemRole getSystemRoleOfRequester() throws AuthenticationException {
+        return userService.findUserByUserName(tokenProvider.getUsernameFromToken()).systemRole();
+    }
 }

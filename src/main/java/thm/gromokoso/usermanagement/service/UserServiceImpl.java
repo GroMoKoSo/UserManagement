@@ -28,10 +28,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto saveUser(UserDto user) {
-        User dbUser = new User(user.userName(), user.firstName(), user.lastName(), user.email(), new ArrayList<>(), new ArrayList<>(), user.systemRole());
+    public UserDto saveUser(UserDto userDto) {
+        User dbUser = new User(userDto.userName(), userDto.firstName(), userDto.lastName(), userDto.email(), new ArrayList<>(), new ArrayList<>(), userDto.systemRole());
         userRepository.save(dbUser);
-        return convertUserToUserDto(dbUser);
+        return userDto;
     }
 
     @Override
@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUserByUserName(String username) {
+        userRepository.findById(username).orElseThrow();
         userRepository.deleteById(username);
     }
 
@@ -145,12 +146,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteApiIdFromUser(String username, Integer apiId) {
+        // Get Database References
         UserToApiId userToApiId = new UserToApiId(apiId, username);
-        User dbUser = userRepository.findById(username).orElseThrow();
-        List<UserToApi> apiAccesses = dbUser.getApiAccesses();
-        apiAccesses.stream().filter(
-                        userToApi -> userToApi.getId().equals(userToApiId))
-                .findFirst().ifPresent(apiAccesses::remove);
+        UserToApi userToApi = userToApiRepository.findById(userToApiId).orElseThrow();
+        userToApiRepository.delete(userToApi);
 
         // Notify MCP Management
         sendNotifyUpdatedToolsToMcpClient(username);

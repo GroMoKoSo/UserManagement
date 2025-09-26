@@ -15,7 +15,7 @@ public class TokenProvider {
     }
 
     public String getUsernameFromToken() throws AuthenticationException {
-        return (String) getJWTToken().getClaims().get("username");
+        return getJWTToken().getClaim("preferred_username");
     }
 
     private Jwt getJWTToken() throws AuthenticationException {

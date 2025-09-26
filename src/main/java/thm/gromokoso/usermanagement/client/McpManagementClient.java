@@ -31,7 +31,7 @@ public class McpManagementClient {
                     .retrieve();
             System.out.println("Client Class: Notify About Changed Tool Sets: " + response.toEntity(String.class).getStatusCode());
         } catch (AuthenticationException ae) {
-            System.out.println("Client Class: Notify About Changed Tool Sets AUTHENTIFICATION ERROR: " + ae);
+            System.out.println("Client Class: Notify About Changed Tool Sets AUTHENTICATION ERROR: " + ae);
         } catch (Exception e) {
             System.out.println("Client Class: Notify About Changed Tool Sets STANDARD ERROR: " + e);
         }

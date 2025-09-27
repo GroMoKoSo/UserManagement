@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import thm.gromokoso.usermanagement.client.McpManagementClient;
 import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.entity.*;
+import thm.gromokoso.usermanagement.exception.InvalidNameException;
 import thm.gromokoso.usermanagement.repository.GroupRepository;
 import thm.gromokoso.usermanagement.repository.GroupToApiRepository;
 import thm.gromokoso.usermanagement.repository.UserRepository;
@@ -34,7 +35,12 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public GroupDto saveGroup(GroupDto groupDto) {
-        Group dbGroup = new Group(groupDto.name(), groupDto.description(), new ArrayList<>(), new ArrayList<>(), groupDto.visibility());
+        Group dbGroup = new Group(groupDto.name().replace(" ", "-"), groupDto.description(), new ArrayList<>(), new ArrayList<>(), groupDto.visibility());
+
+        if (!groupDto.name().matches("^[A-Za-z0-9-]+$")) {
+            throw new InvalidNameException("Group name contains illegal characters");
+        }
+
         groupRepository.save(dbGroup);
         return groupDto;
     }

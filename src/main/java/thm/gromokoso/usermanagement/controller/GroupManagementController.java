@@ -29,6 +29,8 @@ public interface GroupManagementController {
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = GroupDto.class)) }),
             @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content),
+            @ApiResponse(responseCode = "422", description = "Invalid Data in Payload",
                     content = @Content)}
     )
     @PostMapping("/groups")

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import thm.gromokoso.usermanagement.client.McpManagementClient;
 import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.entity.*;
+import thm.gromokoso.usermanagement.exception.InvalidNameException;
 import thm.gromokoso.usermanagement.repository.*;
 
 import java.util.*;
@@ -29,7 +30,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserWithSystemRoleDto saveUser(UserDto userDto) {
-        User dbUser = new User(userDto.userName(), userDto.firstName(), userDto.lastName(), userDto.email(), new ArrayList<>(), new ArrayList<>(), ESystemRole.MEMBER);
+        User dbUser = new User(userDto.userName().replace(" ", "-"), userDto.firstName(), userDto.lastName(), userDto.email(), new ArrayList<>(), new ArrayList<>(), ESystemRole.MEMBER);
+
+        if (!userDto.userName().matches("^[A-Za-z0-9-]+$")) {
+            throw new InvalidNameException("Username contains illegal characters");
+        }
         userRepository.save(dbUser);
         return convertUserToUserWithSystemRoleDto(dbUser);
     }

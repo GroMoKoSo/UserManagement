@@ -70,7 +70,8 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public UserWithSystemRoleDto updateUser(@PathVariable String username, @RequestBody UpdateUserDto updateUserDto) {
+    public UserWithSystemRoleDto updateUser(@PathVariable String username,
+                                            @RequestBody UpdateUserDto updateUserDto) {
         try {
             String tokenUsername = tokenProvider.getUsernameFromToken();
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
@@ -106,7 +107,8 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public List<UserToApiDto> getApis(@PathVariable String username, @RequestParam(required = false, defaultValue = "true") boolean accessViaGroup) {
+    public List<UserToApiDto> getApis(@PathVariable String username,
+                                      @RequestParam(required = false, defaultValue = "true") boolean accessViaGroup) {
         try {
             String tokenUsername = tokenProvider.getUsernameFromToken();
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
@@ -124,7 +126,8 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public UserToApiDto addApis(@PathVariable String username, @RequestBody UserToApiDto userToApiDto) {
+    public UserToApiDto addApis(@PathVariable String username,
+                                @RequestBody UserToApiDto userToApiDto) {
         try {
             String tokenUsername = tokenProvider.getUsernameFromToken();
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
@@ -142,7 +145,9 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public UserToApiDto updateApi(@PathVariable String username, @PathVariable Integer api_id, @RequestBody UpdateUserToApiDto userToApiDto) {
+    public UserToApiDto updateApi(@PathVariable String username,
+                                  @PathVariable Integer api_id,
+                                  @RequestBody UpdateUserToApiDto userToApiDto) {
         try {
             String tokenUsername = tokenProvider.getUsernameFromToken();
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
@@ -160,7 +165,8 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public void deleteApi(@PathVariable String username, @PathVariable Integer api_id) {
+    public void deleteApi(@PathVariable String username,
+                          @PathVariable Integer api_id) {
         try {
             String tokenUsername = tokenProvider.getUsernameFromToken();
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);

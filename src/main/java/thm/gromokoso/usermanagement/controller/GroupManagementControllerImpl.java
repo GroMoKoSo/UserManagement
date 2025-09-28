@@ -23,7 +23,9 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     private final GroupService groupService;
     private final UserService userService;
 
-    GroupManagementControllerImpl(TokenProvider tokenprovider, GroupService groupService, UserService userService) {
+    GroupManagementControllerImpl(TokenProvider tokenprovider,
+                                  GroupService groupService,
+                                  UserService userService) {
         this.tokenProvider = tokenprovider;
         this.groupService = groupService;
         this.userService = userService;
@@ -74,7 +76,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     }
 
     @Override
-    public GroupDto updateGroup(@PathVariable String name, @RequestBody UpdateGroupDto updateGroupDto) {
+    public GroupDto updateGroup(@PathVariable String name,
+                                @RequestBody UpdateGroupDto updateGroupDto) {
         try {
             ESystemRole systemRole = getSystemRoleOfRequester();
             EGroupRole groupRole = getGroupRoleOfUser(name);
@@ -128,7 +131,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     }
 
     @Override
-    public GroupToApiDto addApiIdToGroup(@PathVariable String name, @RequestBody GroupToApiDto groupToApiDto) {
+    public GroupToApiDto addApiIdToGroup(@PathVariable String name,
+                                         @RequestBody GroupToApiDto groupToApiDto) {
         try {
             ESystemRole systemRole = getSystemRoleOfRequester();
             EGroupRole groupRole = getGroupRoleOfUser(name);
@@ -146,7 +150,9 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     }
 
     @Override
-    public GroupToApiDto updateApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id, @RequestBody UpdateGroupToApiDto groupToApiDto) {
+    public GroupToApiDto updateApiIdFromGroup(@PathVariable String name,
+                                              @PathVariable Integer api_id,
+                                              @RequestBody UpdateGroupToApiDto groupToApiDto) {
         try {
             ESystemRole systemRole = getSystemRoleOfRequester();
             EGroupRole groupRole = getGroupRoleOfUser(name);
@@ -164,7 +170,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     }
 
     @Override
-    public void deleteApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id) {
+    public void deleteApiIdFromGroup(@PathVariable String name,
+                                     @PathVariable Integer api_id) {
         try {
             ESystemRole systemRole = getSystemRoleOfRequester();
             EGroupRole groupRole = getGroupRoleOfUser(name);
@@ -200,7 +207,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     }
 
     @Override
-    public UserWithGroupRoleDto addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRoleDto userWithGroupRoleDto) {
+    public UserWithGroupRoleDto addUserToGroup(@PathVariable String name,
+                                               @RequestBody UserWithGroupRoleDto userWithGroupRoleDto) {
         try {
             ESystemRole systemRole = getSystemRoleOfRequester();
             EGroupRole groupRole = getGroupRoleOfUser(name);
@@ -218,7 +226,9 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     }
 
     @Override
-    public UserWithGroupRoleDto updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UpdateUserWithGroupRoleDto userWithGroupRoleDto) {
+    public UserWithGroupRoleDto updateUserFromGroup(@PathVariable String name,
+                                                    @PathVariable String username,
+                                                    @RequestBody UpdateUserWithGroupRoleDto userWithGroupRoleDto) {
         try {
             ESystemRole systemRole = getSystemRoleOfRequester();
             EGroupRole groupRole = getGroupRoleOfUser(name);
@@ -236,7 +246,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
     }
 
     @Override
-    public void deleteUserFromGroup(@PathVariable String name, @PathVariable String username) {
+    public void deleteUserFromGroup(@PathVariable String name,
+                                    @PathVariable String username) {
         try {
             ESystemRole systemRole = getSystemRoleOfRequester();
             EGroupRole groupRole = getGroupRoleOfUser(name);

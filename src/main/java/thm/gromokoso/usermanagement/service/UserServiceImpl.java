@@ -23,7 +23,11 @@ public class UserServiceImpl implements UserService {
 
     Logger logger = LoggerFactory.getLogger(GroupServiceImpl.class);
 
-    public UserServiceImpl(UserRepository userRepository, UserToApiRepository userToApiRepository, UserToGroupRepository userToGroupRepository, GroupRepository groupRepository, McpManagementClient mcpManagementClient) {
+    public UserServiceImpl(UserRepository userRepository,
+                           UserToApiRepository userToApiRepository,
+                           UserToGroupRepository userToGroupRepository,
+                           GroupRepository groupRepository,
+                           McpManagementClient mcpManagementClient) {
         this.userRepository = userRepository;
         this.userToApiRepository = userToApiRepository;
         this.userToGroupRepository = userToGroupRepository;
@@ -53,7 +57,8 @@ public class UserServiceImpl implements UserService {
         logger.info("====== Starting to fetch users ======");
         List<UserWithSystemRoleDto> userWithSystemRoleDtos = new ArrayList<>();
         for (User user : userRepository.findAll()) {
-            userWithSystemRoleDtos.add(new UserWithSystemRoleDto(user.getUserName(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getSystemRole()));
+            userWithSystemRoleDtos.add(new UserWithSystemRoleDto(user.getUserName(), user.getFirstName(),
+                    user.getLastName(), user.getEmail(), user.getSystemRole()));
         }
 
         logger.info("====== Ending to fetch users: SUCCESS ======");
@@ -71,7 +76,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserWithSystemRoleDto updateUser(String username, UpdateUserDto updateUserDto, boolean canChangeSystemRole) {
+    public UserWithSystemRoleDto updateUser(String username,
+                                            UpdateUserDto updateUserDto,
+                                            boolean canChangeSystemRole) {
         // Get Database References
         logger.info("====== Starting update user transaction ======");
         User dbUser = userRepository.findById(username).orElseThrow();
@@ -135,7 +142,8 @@ public class UserServiceImpl implements UserService {
         List<UserToApiDto> userToApiDtoList = new ArrayList<>();
         List<UserToApi> apiAccesses = dbUser.getApiAccesses();
         for (UserToApi userToApi : apiAccesses) {
-            logger.debug("Found API ID '{}' access from user: '{}' with status '{}'", userToApi.getId().getApiId(), username, userToApi.isActive());
+            logger.debug("Found API ID '{}' access from user: '{}' with status '{}'", userToApi.getId().getApiId(),
+                    username, userToApi.isActive());
             userToApiDtoList.add(new UserToApiDto(userToApi.getId().getApiId(), "user", userToApi.isActive()));
         }
 
@@ -148,16 +156,24 @@ public class UserServiceImpl implements UserService {
                 Group dbGroup = groupRepository.findByIdWithApis(userToGroup.getGroup().getGroupName()).orElseThrow();
                 for (GroupToApi groupToApi : dbGroup.getApiAccesses()) {
                     // Check whether API ID is already in an UserToApiAccess Object in List or if Group Access is active while user access in inactive
-                    boolean newApiAccess = userToApiDtoList.stream().noneMatch(userToApiDto -> userToApiDto.apiId().equals(groupToApi.getId().getApiId()));
-                    Optional<UserToApiDto> inactiveUserToApiDto = userToApiDtoList.stream().filter(userToApiDto -> userToApiDto.apiId().equals(groupToApi.getId().getApiId()) && !userToApiDto.active() && groupToApi.isActive()).findFirst();
+                    boolean newApiAccess = userToApiDtoList.stream().noneMatch(
+                            userToApiDto -> userToApiDto.apiId().equals(groupToApi.getId().getApiId())
+                    );
+                    Optional<UserToApiDto> inactiveUserToApiDto = userToApiDtoList.stream().filter(
+                            userToApiDto -> userToApiDto.apiId().equals(
+                                    groupToApi.getId().getApiId()) && !userToApiDto.active() && groupToApi.isActive()
+                    ).findFirst();
 
                     if (newApiAccess)
                     {
-                        logger.debug("Found API ID '{}' access from group: '{}' with status '{}'", groupToApi.getId().getApiId(), dbGroup.getGroupName(), groupToApi.isActive());
-                        userToApiDtoList.add(new UserToApiDto(groupToApi.getId().getApiId(), dbGroup.getGroupName(), groupToApi.isActive()));
+                        logger.debug("Found API ID '{}' access from group: '{}' with status '{}'",
+                                groupToApi.getId().getApiId(), dbGroup.getGroupName(), groupToApi.isActive());
+                        userToApiDtoList.add(new UserToApiDto(groupToApi.getId().getApiId(),
+                                dbGroup.getGroupName(), groupToApi.isActive()));
                     } else if (inactiveUserToApiDto.isPresent()) {
                         // Overwrite inactive access from User with active access granted via Group
-                        logger.debug("Found active API ID '{}' access from group: '{}' with status '{}' which is set as inactive API within the user", groupToApi.getId().getApiId(), dbGroup.getGroupName(), true);
+                        logger.debug("Found active API ID '{}' access from group: '{}' with status '{}' which is set as inactive API within the user",
+                                groupToApi.getId().getApiId(), dbGroup.getGroupName(), true);
                         userToApiDtoList.remove(inactiveUserToApiDto.get());
                         userToApiDtoList.add(new UserToApiDto(groupToApi.getId().getApiId(), dbGroup.getGroupName(), true));
                     }
@@ -217,8 +233,10 @@ public class UserServiceImpl implements UserService {
 
         List<UserToGroup> userToGroupList = dbUser.getGroupMappings();
         for (UserToGroup userToGroup : userToGroupList) {
-            logger.debug("Add group: '{}' with role '{}' to list",userToGroup.getGroup().getGroupName(), userToGroup.getGroupRole());
-            groupWithGroupRoleDtoList.add(new GroupWithGroupRoleDto(userToGroup.getGroup().getGroupName(), userToGroup.getGroupRole()));
+            logger.debug("Add group: '{}' with role '{}' to list", userToGroup.getGroup().getGroupName(),
+                    userToGroup.getGroupRole());
+            groupWithGroupRoleDtoList.add(new GroupWithGroupRoleDto(userToGroup.getGroup().getGroupName(),
+                    userToGroup.getGroupRole()));
         }
         logger.info("====== Ending fetch groups from user transaction: SUCCESS ======");
         return groupWithGroupRoleDtoList;
@@ -243,6 +261,7 @@ public class UserServiceImpl implements UserService {
      * @return UserWithSystemRoleDto object
      */
     private UserWithSystemRoleDto convertUserToUserWithSystemRoleDto(User user) {
-        return new UserWithSystemRoleDto(user.getUserName(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getSystemRole());
+        return new UserWithSystemRoleDto(user.getUserName(), user.getFirstName(), user.getLastName(),
+                user.getEmail(), user.getSystemRole());
     }
 }

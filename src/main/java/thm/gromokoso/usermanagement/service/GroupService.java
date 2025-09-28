@@ -35,7 +35,8 @@ public interface GroupService {
      * @param group Object representation of the data which shall be saved.
      * @return Group object if successful, null if failed.
      */
-    GroupDto updateGroupByGroupName(String name, UpdateGroupDto group);
+    GroupDto updateGroupByGroupName(String name,
+                                    UpdateGroupDto group);
 
     /**
      * Deletes the saved Group data of the Group with the given name.
@@ -55,7 +56,8 @@ public interface GroupService {
      * @param name Unique identifier of the group data.
      * @param userWithGroupRoleDto Dataset of a User and an EGroupRole.
      */
-    UserWithGroupRoleDto addUserToGroupList(String name, UserWithGroupRoleDto userWithGroupRoleDto);
+    UserWithGroupRoleDto addUserToGroupList(String name,
+                                            UserWithGroupRoleDto userWithGroupRoleDto);
 
     /**
      * Updates the Userdata from a user of the group.
@@ -63,14 +65,17 @@ public interface GroupService {
      * @param username Unique identifier of the user data.
      * @param userWithGroupRoleDto Dataset of a User and an EGroupRole.
      */
-    UserWithGroupRoleDto updateUserFromGroup(String name, String username, UpdateUserWithGroupRoleDto userWithGroupRoleDto);
+    UserWithGroupRoleDto updateUserFromGroup(String name,
+                                             String username,
+                                             UpdateUserWithGroupRoleDto userWithGroupRoleDto);
 
     /**
      * Deletes a User from a group so that he is no longer a members and no longer has access to the corresponding tool.
      * @param name Unique identifier of the group data.
      * @param username Unique identifier of the user data.
      */
-    void deleteUserFromGroup(String name, String username);
+    void deleteUserFromGroup(String name,
+                             String username);
 
     /**
      * Saves the given API ID to the Group data which grants the Group and it's members access to the corresponding tool.
@@ -78,7 +83,8 @@ public interface GroupService {
      * @param groupToApiDto Dataset containing the data of the API.
      * @return Api ID if successful, null if failed.
      */
-    GroupToApiDto addApiIdToGroup(String name, GroupToApiDto groupToApiDto);
+    GroupToApiDto addApiIdToGroup(String name,
+                                  GroupToApiDto groupToApiDto);
 
     /**
      * Returns a list of all API IDs of which grants the group and it's members access to the corresponding tools.
@@ -93,12 +99,15 @@ public interface GroupService {
      * @param apiId Unique identifier of an API.
      * @param groupToApiDto Dataset containing the new Data of the API.
      */
-    GroupToApiDto updateApiIdFromGroup(String name, Integer apiId, UpdateGroupToApiDto groupToApiDto);
+    GroupToApiDto updateApiIdFromGroup(String name,
+                                       Integer apiId,
+                                       UpdateGroupToApiDto groupToApiDto);
 
     /**
      * Deletes an API ID from a group so that the group and it's members no longer have access to the corresponding tool.
      * @param name Unique identifier of the group data.
      * @param apiId Unique identifier of an API.
      */
-    void deleteApiIdFromGroup(String name, Integer apiId);
+    void deleteApiIdFromGroup(String name,
+                              Integer apiId);
 }

@@ -58,7 +58,8 @@ public interface UserManagementController {
                     content = @Content)}
     )
     @PutMapping("/users/{username}")
-    UserWithSystemRoleDto updateUser(@PathVariable String username, @RequestBody UpdateUserDto user);
+    UserWithSystemRoleDto updateUser(@PathVariable String username,
+                                     @RequestBody UpdateUserDto user);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User was successfully deleted."),
@@ -104,7 +105,9 @@ public interface UserManagementController {
                     content = @Content)}
     )
     @PutMapping("users/{username}/apis/{api_id}")
-    UserToApiDto updateApi(@PathVariable String username, @PathVariable Integer api_id, @RequestBody UpdateUserToApiDto userToApiDto);
+    UserToApiDto updateApi(@PathVariable String username,
+                           @PathVariable Integer api_id,
+                           @RequestBody UpdateUserToApiDto userToApiDto);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "API ID from User successfully deleted."),
@@ -114,7 +117,8 @@ public interface UserManagementController {
                     content = @Content)}
     )
     @DeleteMapping("/users/{username}/apis/{api_id}")
-    void deleteApi(@PathVariable String username, @PathVariable Integer api_id);
+    void deleteApi(@PathVariable String username,
+                   @PathVariable Integer api_id);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All Groups of User with their Role in the group successfully returned.",

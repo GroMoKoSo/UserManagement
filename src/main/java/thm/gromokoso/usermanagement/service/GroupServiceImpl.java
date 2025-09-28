@@ -27,7 +27,11 @@ public class GroupServiceImpl implements GroupService {
 
     Logger logger = LoggerFactory.getLogger(GroupServiceImpl.class);
 
-    public GroupServiceImpl(GroupRepository groupRepository, UserRepository userRepository, UserToGroupRepository userToGroupRepository, GroupToApiRepository groupToApiRepository, McpManagementClient mcpManagementClient) {
+    public GroupServiceImpl(GroupRepository groupRepository,
+                            UserRepository userRepository,
+                            UserToGroupRepository userToGroupRepository,
+                            GroupToApiRepository groupToApiRepository,
+                            McpManagementClient mcpManagementClient) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
         this.userToGroupRepository = userToGroupRepository;
@@ -79,7 +83,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupDto updateGroupByGroupName(String name, UpdateGroupDto updateGroup) {
+    public GroupDto updateGroupByGroupName(String name,
+                                           UpdateGroupDto updateGroup) {
         // Get Database References
         logger.info("====== Starting update group transaction ======");
         Group dbGroup = groupRepository.findById(name).orElseThrow();
@@ -124,7 +129,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public UserWithGroupRoleDto addUserToGroupList(String name, UserWithGroupRoleDto userWithGroupRoleDto) {
+    public UserWithGroupRoleDto addUserToGroupList(String name,
+                                                   UserWithGroupRoleDto userWithGroupRoleDto) {
         logger.info("====== Starting add user from group transaction ======");
         // Get Database References
         logger.debug("Try to fetch group with name: '{}'", name);
@@ -147,7 +153,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public UserWithGroupRoleDto updateUserFromGroup(String name, String username, UpdateUserWithGroupRoleDto updateUserWithGroupRoleDto) {
+    public UserWithGroupRoleDto updateUserFromGroup(String name,
+                                                    String username,
+                                                    UpdateUserWithGroupRoleDto updateUserWithGroupRoleDto) {
         logger.info("====== Starting update user from group transaction ======");
         // Get Database References
         logger.debug("Try to fetch user to group relation with username: '{}' and group name '{}'", username, name);
@@ -167,7 +175,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void deleteUserFromGroup(String name, String username) {
+    public void deleteUserFromGroup(String name,
+                                    String username) {
         logger.info("====== Starting delete user from group transaction ======");
         logger.debug("Try to fetch user to group relation with username: '{}' and group name '{}'", username, name);
         userToGroupRepository.findById(new UserToGroupId(username, name)).orElseThrow();
@@ -182,7 +191,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupToApiDto addApiIdToGroup(String name, GroupToApiDto groupToApiDto) {
+    public GroupToApiDto addApiIdToGroup(String name,
+                                         GroupToApiDto groupToApiDto) {
         // Get Database References
         logger.info("====== Starting add API ID to group transaction ======");
         logger.debug("Try to fetch group with name: '{}'", name);
@@ -218,7 +228,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupToApiDto updateApiIdFromGroup(String name, Integer apiId, UpdateGroupToApiDto updateGroupToApiDto) {
+    public GroupToApiDto updateApiIdFromGroup(String name,
+                                              Integer apiId,
+                                              UpdateGroupToApiDto updateGroupToApiDto) {
         // Get Database References
         logger.info("====== Starting update API IDs from group transaction ======");
         logger.debug("Try to fetch group to API relation with name: '{}' and API ID '{}'", name, apiId);
@@ -241,7 +253,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void deleteApiIdFromGroup(String name, Integer apiId) {
+    public void deleteApiIdFromGroup(String name,
+                                     Integer apiId) {
         logger.info("====== Starting delete API ID from group transaction ======");
         logger.debug("Try to fetch group to API relation with name: '{}' and API ID '{}'", name, apiId);
         GroupToApiId groupToApiId = new GroupToApiId(apiId, name);

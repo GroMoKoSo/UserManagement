@@ -35,7 +35,9 @@ public interface UserService {
      * @param canChangeSystemRole Whether the Requester has sufficient rights to change the system role of the user.
      * @return User object if successful, null if failed.
      */
-    UserWithSystemRoleDto updateUser( String username, UpdateUserDto user, boolean canChangeSystemRole );
+    UserWithSystemRoleDto updateUser( String username,
+                                      UpdateUserDto user,
+                                      boolean canChangeSystemRole );
 
     /**
      * Deletes the saved User data of the User with the given ID.
@@ -49,7 +51,8 @@ public interface UserService {
      * @param userToApiIdDto Dataset of the API which should be updated from the User including ID and whether its active.
      * @return Api ID if successful, null if failed.
      */
-    UserToApiDto addApiToUser(String username, UserToApiDto userToApiIdDto);
+    UserToApiDto addApiToUser(String username,
+                              UserToApiDto userToApiIdDto);
 
     /**
      * Returns a list of all API IDs of which grants the user access to the corresponding tools.
@@ -57,7 +60,8 @@ public interface UserService {
      * @param accessViaGroup Whether the request should also return API ID's for which the user has access because of the membership of a group.
      * @return List of API IDs and whether their active if successful, null if no user with this ID is saved.
      */
-    List<UserToApiDto> fetchApiListFromUser(String username, boolean accessViaGroup);
+    List<UserToApiDto> fetchApiListFromUser(String username,
+                                            boolean accessViaGroup);
 
     /**
      * Deletes an API ID from a user so that the user no longer has access to the corresponding tool.
@@ -65,14 +69,17 @@ public interface UserService {
      * @param apiId Unique identifier of an API.
      * @param userToApiIdDto Dataset of the API which should be updated from the User including ID and whether its active.
      */
-    UserToApiDto updateApiFromUser(String username, Integer apiId, UpdateUserToApiDto userToApiIdDto);
+    UserToApiDto updateApiFromUser(String username,
+                                   Integer apiId,
+                                   UpdateUserToApiDto userToApiIdDto);
 
     /**
      * Deletes an API ID from a user so that the user no longer has access to the corresponding tool.
      * @param username Unique identifier of the user data.
      * @param apiId Unique identifier of an API.
      */
-    void deleteApiIdFromUser(String username, Integer apiId);
+    void deleteApiIdFromUser(String username,
+                             Integer apiId);
 
     /**
      * Returns a list of groups which the user is part of and also his corresponding role within the groups.

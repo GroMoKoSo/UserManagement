@@ -93,7 +93,8 @@ public interface GroupManagementController {
                     content = @Content)}
     )
     @PostMapping("/groups/{name}/apis")
-    GroupToApiDto addApiIdToGroup(@PathVariable String name, @RequestBody GroupToApiDto groupToApiDto);
+    GroupToApiDto addApiIdToGroup(@PathVariable String name,
+                                  @RequestBody GroupToApiDto groupToApiDto);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "API ID for Group successfully updated.",
@@ -105,7 +106,9 @@ public interface GroupManagementController {
                     content = @Content)}
     )
     @PutMapping("/groups/{name}/apis/{api_id}")
-    GroupToApiDto updateApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id, @RequestBody UpdateGroupToApiDto groupToApiDto);
+    GroupToApiDto updateApiIdFromGroup(@PathVariable String name,
+                                       @PathVariable Integer api_id,
+                                       @RequestBody UpdateGroupToApiDto groupToApiDto);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "API ID from Group successfully deleted."),
@@ -115,7 +118,8 @@ public interface GroupManagementController {
                     content = @Content)}
     )
     @DeleteMapping("/groups/{name}/apis/{api_id}")
-    void deleteApiIdFromGroup(@PathVariable String name, @PathVariable Integer api_id);
+    void deleteApiIdFromGroup(@PathVariable String name,
+                              @PathVariable Integer api_id);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All Users of Group successfully returned.",
@@ -139,7 +143,8 @@ public interface GroupManagementController {
                     content = @Content)}
     )
     @PostMapping("/groups/{name}/users")
-    UserWithGroupRoleDto addUserToGroup(@PathVariable String name, @RequestBody UserWithGroupRoleDto userWithGroupRoleDto);
+    UserWithGroupRoleDto addUserToGroup(@PathVariable String name,
+                                        @RequestBody UserWithGroupRoleDto userWithGroupRoleDto);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User from Group successfully updated.",
@@ -151,7 +156,9 @@ public interface GroupManagementController {
                     content = @Content)}
     )
     @PutMapping("/groups/{name}/users/{username}")
-    UserWithGroupRoleDto updateUserFromGroup(@PathVariable String name, @PathVariable String username, @RequestBody UpdateUserWithGroupRoleDto userWithGroupRoleDto);
+    UserWithGroupRoleDto updateUserFromGroup(@PathVariable String name,
+                                             @PathVariable String username,
+                                             @RequestBody UpdateUserWithGroupRoleDto userWithGroupRoleDto);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User from Group successfully deleted."),
@@ -161,5 +168,6 @@ public interface GroupManagementController {
                     content = @Content)}
     )
     @DeleteMapping("/groups/{name}/users/{username}")
-    void deleteUserFromGroup(@PathVariable String name, @PathVariable String username);
+    void deleteUserFromGroup(@PathVariable String name,
+                             @PathVariable String username);
 }

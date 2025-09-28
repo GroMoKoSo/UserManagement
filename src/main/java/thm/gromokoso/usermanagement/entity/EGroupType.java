@@ -13,7 +13,7 @@ public enum EGroupType {
         this.value = value;
     }
 
-    @JsonValue   // Jackson verwendet diesen Wert bei (De-)Serialisierung
+    @JsonValue
     public String getValue() {
         return value;
     }

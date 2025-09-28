@@ -61,7 +61,7 @@ public class UserManagementControllerImpl implements UserManagementController {
             if (tokenUser.systemRole() != ESystemRole.ADMIN && !tokenUser.userName().equals(username)) {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
-            return tokenUser;
+            return userService.findUserByUserName(username);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {

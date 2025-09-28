@@ -48,9 +48,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to add a group!");
-            } else {
-                return groupService.saveGroup(group);
             }
+            return groupService.saveGroup(group);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         }
@@ -65,9 +64,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (groupRole == null && systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to get information about this group!");
-            } else {
-                return groupService.getGroupByGroupName(name);
             }
+            return groupService.getGroupByGroupName(name);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
@@ -84,9 +82,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to edit this group!");
-            } else {
-                return groupService.updateGroupByGroupName(name, updateGroupDto);
             }
+            return groupService.updateGroupByGroupName(name, updateGroupDto);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
@@ -103,9 +100,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to delete this group!");
-            } else {
-                groupService.deleteGroupByGroupName(name);
             }
+            groupService.deleteGroupByGroupName(name);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
@@ -122,9 +118,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (groupRole == null && systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to get information about this group!");
-            } else {
-                return groupService.fetchApiIdListFromGroup(name);
             }
+            return groupService.fetchApiIdListFromGroup(name);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
@@ -141,9 +136,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (groupRole != EGroupRole.ADMIN && groupRole != EGroupRole.EDITOR && systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to add API's of this group!");
-            } else {
-                return groupService.addApiIdToGroup(name, groupToApiDto);
             }
+            return groupService.addApiIdToGroup(name, groupToApiDto);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
@@ -160,9 +154,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (groupRole != EGroupRole.ADMIN && groupRole != EGroupRole.EDITOR && systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to edit API's of this group!");
-            } else {
-                return groupService.updateApiIdFromGroup(name, api_id, groupToApiDto);
             }
+            return groupService.updateApiIdFromGroup(name, api_id, groupToApiDto);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
@@ -179,9 +172,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (groupRole != EGroupRole.ADMIN && groupRole != EGroupRole.EDITOR && systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to delete API's of this group!");
-            } else {
-                groupService.deleteApiIdFromGroup(name, api_id);
             }
+            groupService.deleteApiIdFromGroup(name, api_id);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
@@ -198,9 +190,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (groupRole == null && systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to get information about the users of this group!");
-            } else {
-                return groupService.fetchUserListFromGroup(name);
             }
+            return groupService.fetchUserListFromGroup(name);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
@@ -217,9 +208,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to add users to this group!");
-            } else {
-                return groupService.addUserToGroupList(name, userWithGroupRoleDto);
             }
+            return groupService.addUserToGroupList(name, userWithGroupRoleDto);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
@@ -236,9 +226,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to edit userdata to this group!");
-            } else {
-                return groupService.updateUserFromGroup(name, username, userWithGroupRoleDto);
             }
+            return groupService.updateUserFromGroup(name, username, userWithGroupRoleDto);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
@@ -255,9 +244,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             // Check Permissions
             if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to delete users from this group!");
-            } else {
-                groupService.deleteUserFromGroup(name, username);
             }
+            groupService.deleteUserFromGroup(name, username);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {

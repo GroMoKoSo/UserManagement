@@ -13,7 +13,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update   # nur für Entwicklung, in Prod lieber 'validate'
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect

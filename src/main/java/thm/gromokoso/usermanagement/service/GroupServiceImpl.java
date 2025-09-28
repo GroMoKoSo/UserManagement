@@ -22,7 +22,7 @@ public class GroupServiceImpl implements GroupService {
     private final UserRepository userRepository;
     private final UserToGroupRepository userToGroupRepository;
     private final GroupToApiRepository groupToApiRepository;
-    @Autowired private final McpManagementClient mcpManagementClient;
+    private final McpManagementClient mcpManagementClient;
 
     public GroupServiceImpl(GroupRepository groupRepository, UserRepository userRepository, UserToGroupRepository userToGroupRepository, GroupToApiRepository groupToApiRepository, McpManagementClient mcpManagementClient) {
         this.groupRepository = groupRepository;
@@ -48,15 +48,10 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<GroupDto> fetchGroupList(boolean privateVisibility) {
         List<GroupDto> groupList = new ArrayList<>();
-        List<Group> dbGroups = groupRepository.findAll();
+        EGroupType groupVisibility = privateVisibility ? EGroupType.PRIVATE : EGroupType.PUBLIC;
+        List<Group> dbGroups = groupRepository.findAllByTypeVisible(groupVisibility);
         for (Group dbGroup : dbGroups) {
-            if (dbGroup.getType() == EGroupType.PRIVATE) {
-                if (privateVisibility) {
-                    groupList.add(convertGroupToGroupDto(dbGroup));
-                }
-            } else {
-                groupList.add(convertGroupToGroupDto(dbGroup));
-            }
+            groupList.add(convertGroupToGroupDto(dbGroup));
         }
         return groupList;
     }
@@ -92,11 +87,13 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public List<UserWithGroupRoleDto> fetchUserListFromGroup(String name) {
+        ArrayList<UserWithGroupRoleDto> userWithGroupRoleList = new ArrayList<>();
         groupRepository.findById(name).orElseThrow();
-        return userToGroupRepository.findByGroup_GroupName(name).stream()
-                .map(userToGroup ->
-                    new UserWithGroupRoleDto(userToGroup.getUser().getUserName(), userToGroup.getGroupRole())).toList();
-
+        List<UserToGroup> userToGroupList = userToGroupRepository.findByGroup_GroupName(name);
+        for (UserToGroup userToGroup : userToGroupList) {
+            userWithGroupRoleList.add(new UserWithGroupRoleDto(userToGroup.getUser().getUserName(), userToGroup.getGroupRole()));
+        }
+        return userWithGroupRoleList;
     }
 
     @Override

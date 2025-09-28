@@ -42,11 +42,10 @@ public class UserManagementControllerImpl implements UserManagementController {
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUsername.equals(userDto.userName())) {
-                return userService.saveUser(userDto);
-            } else {
+            if (tokenUser.systemRole() != ESystemRole.ADMIN && !tokenUsername.equals(userDto.userName())) {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
+            return userService.saveUser(userDto);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         }
@@ -59,11 +58,10 @@ public class UserManagementControllerImpl implements UserManagementController {
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUser.userName().equals(username)) {
-                return tokenUser;
-            } else {
+            if (tokenUser.systemRole() != ESystemRole.ADMIN && !tokenUser.userName().equals(username)) {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
+            return tokenUser;
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
@@ -78,11 +76,10 @@ public class UserManagementControllerImpl implements UserManagementController {
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUser.userName().equals(username)) {
-                return userService.updateUser(username, updateUserDto, tokenUser.systemRole() == ESystemRole.ADMIN);
-            } else {
+            if (tokenUser.systemRole() != ESystemRole.ADMIN && !tokenUser.userName().equals(username)) {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
+            return userService.updateUser(username, updateUserDto, tokenUser.systemRole() == ESystemRole.ADMIN);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
@@ -97,11 +94,10 @@ public class UserManagementControllerImpl implements UserManagementController {
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUser.userName().equals(username)) {
-                userService.deleteUserByUserName(username);
-            } else {
+            if (tokenUser.systemRole() != ESystemRole.ADMIN && !tokenUser.userName().equals(username)) {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
+            userService.deleteUserByUserName(username);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
@@ -116,11 +112,10 @@ public class UserManagementControllerImpl implements UserManagementController {
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUser.userName().equals(username)) {
-                return userService.fetchApiListFromUser(username, accessViaGroup);
-            } else {
+            if (tokenUser.systemRole() != ESystemRole.ADMIN && !tokenUser.userName().equals(username)) {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
+            return userService.fetchApiListFromUser(username, accessViaGroup);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
@@ -135,11 +130,10 @@ public class UserManagementControllerImpl implements UserManagementController {
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (tokenUser.userName().equals(username)) {
-                return userService.addApiToUser(username, userToApiDto);
-            } else {
+            if (!tokenUser.userName().equals(username)) {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
+            return userService.addApiToUser(username, userToApiDto);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
@@ -154,11 +148,10 @@ public class UserManagementControllerImpl implements UserManagementController {
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (tokenUser.userName().equals(username)) {
-                return userService.updateApiFromUser(username, api_id, userToApiDto);
-            } else {
+            if (!tokenUser.userName().equals(username)) {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
+            return userService.updateApiFromUser(username, api_id, userToApiDto);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
@@ -173,11 +166,10 @@ public class UserManagementControllerImpl implements UserManagementController {
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (tokenUser.userName().equals(username)) {
-                userService.deleteApiIdFromUser(username, api_id);
-            } else {
+            if (!tokenUser.userName().equals(username)) {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
+            userService.deleteApiIdFromUser(username, api_id);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
@@ -192,11 +184,10 @@ public class UserManagementControllerImpl implements UserManagementController {
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (tokenUser.systemRole() == ESystemRole.ADMIN || tokenUser.userName().equals(username)) {
-                return userService.fetchGroupListFromUser(username);
-            } else {
+            if (tokenUser.systemRole() != ESystemRole.ADMIN && !tokenUser.userName().equals(username)) {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
+            return userService.fetchGroupListFromUser(username);
         } catch (AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {

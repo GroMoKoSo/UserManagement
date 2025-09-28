@@ -8,8 +8,8 @@ import thm.gromokoso.usermanagement.exception.NotAuthorizedException;
 import thm.gromokoso.usermanagement.exception.ResourceNotFoundException;
 import thm.gromokoso.usermanagement.security.TokenProvider;
 import thm.gromokoso.usermanagement.service.UserService;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 
-import javax.security.sasl.AuthenticationException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -29,7 +29,7 @@ public class UserManagementControllerImpl implements UserManagementController {
         try {
             tokenProvider.getToken();
             return userService.fetchUserList();
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         }
 
@@ -46,7 +46,7 @@ public class UserManagementControllerImpl implements UserManagementController {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
             return userService.saveUser(userDto);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         }
     }
@@ -62,7 +62,7 @@ public class UserManagementControllerImpl implements UserManagementController {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
             return userService.findUserByUserName(username);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
             throw new ResourceNotFoundException("There is no user with the name: " + username + "!");
@@ -81,7 +81,7 @@ public class UserManagementControllerImpl implements UserManagementController {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
             return userService.updateUser(username, updateUserDto, tokenUser.systemRole() == ESystemRole.ADMIN);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
             throw new ResourceNotFoundException("There is no user with the name: " + username + "!");
@@ -99,7 +99,7 @@ public class UserManagementControllerImpl implements UserManagementController {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
             userService.deleteUserByUserName(username);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
             throw new ResourceNotFoundException("There is no user with the name: " + username + "!");
@@ -118,7 +118,7 @@ public class UserManagementControllerImpl implements UserManagementController {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
             return userService.fetchApiListFromUser(username, accessViaGroup);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
             throw new ResourceNotFoundException("There is no user with the name: " + username + "!");
@@ -137,7 +137,7 @@ public class UserManagementControllerImpl implements UserManagementController {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
             return userService.addApiToUser(username, userToApiDto);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
             throw new ResourceNotFoundException("There is no user with the name: " + username + "!");
@@ -157,7 +157,7 @@ public class UserManagementControllerImpl implements UserManagementController {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
             return userService.updateApiFromUser(username, api_id, userToApiDto);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
             throw new ResourceNotFoundException("The user either does not exists or does not have access to this API!");
@@ -176,7 +176,7 @@ public class UserManagementControllerImpl implements UserManagementController {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
             userService.deleteApiIdFromUser(username, api_id);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
             throw new ResourceNotFoundException("The user either does not exists or does not have access to this API!");
@@ -194,7 +194,7 @@ public class UserManagementControllerImpl implements UserManagementController {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
             return userService.fetchGroupListFromUser(username);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
             throw new ResourceNotFoundException("There is no user with the name: " + username + "!");

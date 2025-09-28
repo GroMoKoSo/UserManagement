@@ -1,5 +1,6 @@
 package thm.gromokoso.usermanagement.controller;
 
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.entity.EGroupRole;
@@ -12,7 +13,6 @@ import thm.gromokoso.usermanagement.service.GroupService;
 import thm.gromokoso.usermanagement.service.UserService;
 
 
-import javax.security.sasl.AuthenticationException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -37,7 +37,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             ESystemRole systemRole = getSystemRoleOfRequester();
 
             return groupService.fetchGroupList(systemRole == ESystemRole.ADMIN);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         }
     }
@@ -52,7 +52,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to add a group!");
             }
             return groupService.saveGroup(group);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         }
     }
@@ -68,7 +68,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to get information about this group!");
             }
             return groupService.getGroupByGroupName(name);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group not found!");
@@ -87,7 +87,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to edit this group!");
             }
             return groupService.updateGroupByGroupName(name, updateGroupDto);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group not found!");
@@ -105,7 +105,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to delete this group!");
             }
             groupService.deleteGroupByGroupName(name);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group not found!");
@@ -123,7 +123,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to get information about this group!");
             }
             return groupService.fetchApiIdListFromGroup(name);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group not found!");
@@ -142,7 +142,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to add API's of this group!");
             }
             return groupService.addApiIdToGroup(name, groupToApiDto);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group not found!");
@@ -162,7 +162,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to edit API's of this group!");
             }
             return groupService.updateApiIdFromGroup(name, api_id, groupToApiDto);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group does not exist or does not have access to the API ID!");
@@ -181,7 +181,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to delete API's of this group!");
             }
             groupService.deleteApiIdFromGroup(name, api_id);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group does not exist or does not have access to the API ID!");
@@ -199,7 +199,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to get information about the users of this group!");
             }
             return groupService.fetchUserListFromGroup(name);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group not found!");
@@ -218,7 +218,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to add users to this group!");
             }
             return groupService.addUserToGroupList(name, userWithGroupRoleDto);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group not found!");
@@ -238,7 +238,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to edit userdata to this group!");
             }
             return groupService.updateUserFromGroup(name, username, userWithGroupRoleDto);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group does not exist or user is not a Member!");
@@ -257,14 +257,14 @@ public class GroupManagementControllerImpl implements GroupManagementController 
                 throw new NotAuthorizedException("You do not have permission to delete users from this group!");
             }
             groupService.deleteUserFromGroup(name, username);
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group does not exist or user is not a Member!");
         }
     }
 
-    private EGroupRole getGroupRoleOfUser(String name) throws AuthenticationException {
+    private EGroupRole getGroupRoleOfUser(String name) throws OAuth2AuthenticationException {
         String username = tokenProvider.getUsernameFromToken();
         for (GroupWithGroupRoleDto groupWithGroupRoleDto : userService.fetchGroupListFromUser(username)) {
             if (groupWithGroupRoleDto.groupName().equals(name)) {
@@ -275,7 +275,7 @@ public class GroupManagementControllerImpl implements GroupManagementController 
         return null;
     }
 
-    private ESystemRole getSystemRoleOfRequester() throws AuthenticationException {
+    private ESystemRole getSystemRoleOfRequester() throws OAuth2AuthenticationException {
         return userService.findUserByUserName(tokenProvider.getUsernameFromToken()).systemRole();
     }
 }

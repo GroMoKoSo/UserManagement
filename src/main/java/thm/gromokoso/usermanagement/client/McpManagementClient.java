@@ -3,12 +3,11 @@ package thm.gromokoso.usermanagement.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import thm.gromokoso.usermanagement.security.TokenProvider;
-import thm.gromokoso.usermanagement.service.GroupServiceImpl;
 
-import javax.security.sasl.AuthenticationException;
 import java.util.List;
 
 @Component
@@ -36,7 +35,7 @@ public class McpManagementClient {
                     .body(apiIds)
                     .retrieve();
             logger.info("====== Ending notifying Mcp Management about changed tool set. Response: {} ======", response.toEntity(String.class).getStatusCode());
-        } catch (AuthenticationException ae) {
+        } catch (OAuth2AuthenticationException ae) {
             logger.error("Ending notifying Mcp Management about changed tool set because of AUTHENTICATION ERROR: {}", ae.getMessage());
         } catch (Exception e) {
             logger.error("Ending notifying Mcp Management about changed tool set because of OTHER ERROR: {}", e.getMessage());

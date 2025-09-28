@@ -62,9 +62,14 @@ public class GroupServiceImpl implements GroupService {
     public List<GroupDto> fetchGroupList(boolean privateVisibility) {
         logger.info("====== Starting to fetch groups ======");
         List<GroupDto> groupList = new ArrayList<>();
-        EGroupType groupVisibility = privateVisibility ? EGroupType.PRIVATE : EGroupType.PUBLIC;
-        if (privateVisibility) logger.debug("Also fetching groups with private visibility");
-        List<Group> dbGroups = groupRepository.findAllByTypeVisible(groupVisibility);
+        List<Group> dbGroups;
+        if (privateVisibility) {
+            logger.debug("Fetch groups with private and public visibility");
+            dbGroups = groupRepository.findAll();
+        } else {
+            logger.debug("Fetch groups with public visibility");
+             dbGroups = groupRepository.findAllPublicGroups();
+        }
         for (Group dbGroup : dbGroups) {
             groupList.add(convertGroupToGroupDto(dbGroup));
         }

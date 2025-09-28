@@ -14,6 +14,6 @@ import java.util.Optional;
 public interface GroupRepository extends JpaRepository<Group, String> {
     @Query("SELECT g FROM Group g LEFT JOIN FETCH g.apiAccesses WHERE g.groupName = :groupName")
     Optional<Group> findByIdWithApis(@Param("groupName") String groupName);
-    @Query("SELECT g FROM Group g WHERE g.type = :visibility")
-    List<Group> findAllByTypeVisible(@Param("visibility") EGroupType visibility);
+    @Query("SELECT g FROM Group g WHERE g.type = 'public'")
+    List<Group> findAllPublicGroups();
 }

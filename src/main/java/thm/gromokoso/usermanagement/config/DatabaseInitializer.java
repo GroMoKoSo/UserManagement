@@ -10,7 +10,7 @@ import thm.gromokoso.usermanagement.repository.UserRepository;
 public class DatabaseInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
-    private final String SYSADMIN = "SysAdmin";
+    private final String SYSADMIN = "sysadmin";
 
     public DatabaseInitializer(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -28,9 +28,9 @@ public class DatabaseInitializer implements CommandLineRunner {
             sysAdmin.setSystemRole(ESystemRole.ADMIN);
 
             userRepository.save(sysAdmin);
-            System.out.println("SysAdmin user created.");
+            System.out.println("sysadmin user created.");
         } else {
-            System.out.println("At least one admin user already exists, skipping initialization of SysAdmin.");
+            System.out.println("At least one admin user already exists, skipping initialization of sysadmin.");
         }
     }
 }

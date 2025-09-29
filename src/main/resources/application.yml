@@ -30,12 +30,18 @@ spring:
 server:
   port: 8080
 
-cors-allowed-origins: '"http://localhost:8080", "http://localhost:5173"'
+cors-allowed-origins: "http://localhost:8080"
 
 logging:
   level:
     de.thm.usermanagement: DEBUG
     org.hibernate.sql: DEBUG
+---
+
+spring:
+  config:
+    activate.on-profile: dev
+cors-allowed-origins: "http://localhost:5173"
 ---
 
 spring:
@@ -51,3 +57,5 @@ spring:
         jwt:
           issuer-uri: https://zdh-swa-muenker.zdh.thm.de/keycloak/realms/swa2025
           jwk-set-uri: https://zdh-swa-muenker.zdh.thm.de/keycloak/realms/swa2025/protocol/openid-connect/certs
+
+cors-allowed-origins: "https://zdh-swa-muenker.zdh.thm.de/gromokoso"

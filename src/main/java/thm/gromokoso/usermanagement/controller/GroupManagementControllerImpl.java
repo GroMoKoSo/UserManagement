@@ -5,6 +5,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.entity.EGroupRole;
+import thm.gromokoso.usermanagement.entity.EGroupType;
 import thm.gromokoso.usermanagement.entity.ESystemRole;
 import thm.gromokoso.usermanagement.exception.InvalidTokenException;
 import thm.gromokoso.usermanagement.exception.NotAuthorizedException;
@@ -68,7 +69,9 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             EGroupRole groupRole = getGroupRoleOfUser(name);
 
             // Check Permissions
-            if (groupRole == null && systemRole != ESystemRole.ADMIN) {
+            if (groupRole == null &&
+                    systemRole != ESystemRole.ADMIN &&
+                    groupService.getGroupByGroupName(name).visibility() == EGroupType.PRIVATE) {
                 throw new NotAuthorizedException("You do not have permission to get information about this group!");
             }
             return groupService.getGroupByGroupName(name);
@@ -218,9 +221,13 @@ public class GroupManagementControllerImpl implements GroupManagementController 
         try {
             ESystemRole systemRole = getSystemRoleOfRequester();
             EGroupRole groupRole = getGroupRoleOfUser(name);
+            String tokenUsername = tokenProvider.getUsernameFromToken();
 
             // Check Permissions
-            if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
+            if (groupRole != EGroupRole.ADMIN &&
+                    systemRole != ESystemRole.ADMIN &&
+                    !tokenUsername.equals(userWithGroupRoleDto.username()) &&
+                    groupService.getGroupByGroupName(name).visibility() == EGroupType.PRIVATE) {
                 throw new NotAuthorizedException("You do not have permission to add users to this group!");
             }
             return groupService.addUserToGroupList(name, userWithGroupRoleDto);

@@ -37,17 +37,22 @@ public class UserManagementControllerImpl implements UserManagementController {
 
     @Override
     public UserWithSystemRoleDto addUser(@RequestBody UserDto userDto) {
+        String tokenUsername;
+        UserWithSystemRoleDto tokenUser;
         try {
-            String tokenUsername = tokenProvider.getUsernameFromToken();
-            UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
+            tokenUsername = tokenProvider.getUsernameFromToken();
+            tokenUser = userService.findUserByUserName(tokenUsername);
 
             // Check if Requester has needed Rights
-            if (tokenUser.systemRole() != ESystemRole.ADMIN && !tokenUsername.equals(userDto.userName())) {
+            if (tokenUser.systemRole() != ESystemRole.ADMIN) {
                 throw new NotAuthorizedException("You do not have permission to access this user!");
             }
             return userService.saveUser(userDto);
         } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (NoSuchElementException nse) {
+            // User wants to register himself, he is registered in keycloak but not in Database
+            return userService.saveUser(userDto);
         }
     }
 

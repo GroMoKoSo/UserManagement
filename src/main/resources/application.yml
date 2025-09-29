@@ -58,4 +58,4 @@ spring:
           issuer-uri: https://zdh-swa-muenker.zdh.thm.de/keycloak/realms/swa2025
           jwk-set-uri: https://zdh-swa-muenker.zdh.thm.de/keycloak/realms/swa2025/protocol/openid-connect/certs
 
-cors-allowed-origins: "https://zdh-swa-muenker.zdh.thm.de/gromokoso"
+cors-allowed-origins: "https://zdh-swa-muenker.zdh.thm.de"

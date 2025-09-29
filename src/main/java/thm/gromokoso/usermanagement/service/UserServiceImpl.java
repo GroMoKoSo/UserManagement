@@ -88,8 +88,9 @@ public class UserServiceImpl implements UserService {
         dbUser.setFirstName(updateUserDto.firstName());
         dbUser.setLastName(updateUserDto.lastName());
         dbUser.setEmail(updateUserDto.email());
-
-        if (canChangeSystemRole) {
+        if (canChangeSystemRole &&
+                updateUserDto.systemRole() == ESystemRole.MEMBER &&
+                userRepository.countUserBySystemRole(ESystemRole.ADMIN) > 1) {
             logger.debug("Also updating system role of user: '{}...'", username);
             dbUser.setSystemRole(updateUserDto.systemRole());
         }
@@ -106,9 +107,16 @@ public class UserServiceImpl implements UserService {
     public void deleteUserByUserName(String username) {
         logger.info("====== Starting delete user transaction ======");
         logger.debug("Try to fetch user with name: '{}'", username);
-        userRepository.findById(username).orElseThrow();
-        userRepository.deleteById(username);
-        logger.info("====== Ending delete user transaction: SUCCESS ======");
+        // Prevent that the last Admin in the System will be deleted
+        User dbUser = userRepository.findById(username).orElseThrow();
+        if (dbUser.getSystemRole() != ESystemRole.ADMIN || userRepository.countUserBySystemRole(ESystemRole.ADMIN) > 1) {
+            userRepository.deleteById(username);
+            logger.info("====== Ending delete user transaction: SUCCESS ======");
+        } else {
+            logger.error("Cannot delete the last Admin in the System!");
+            logger.info("====== Ending delete user transaction: FAILURE ======");
+        }
+
     }
 
     @Override

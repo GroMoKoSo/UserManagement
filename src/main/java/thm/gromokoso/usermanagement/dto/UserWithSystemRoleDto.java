@@ -3,7 +3,7 @@ package thm.gromokoso.usermanagement.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import thm.gromokoso.usermanagement.entity.ESystemRole;
 
-public record UserDto(
+public record UserWithSystemRoleDto(
         @Schema(example = "user123")
         String userName,
         @Schema(example = "John")
@@ -11,6 +11,8 @@ public record UserDto(
         @Schema(example = "Doe")
         String lastName,
         @Schema(example = "john.doe@example.com")
-        String email
+        String email,
+        @Schema(example = "Member")
+        ESystemRole systemRole
 )
 { }

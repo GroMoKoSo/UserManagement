@@ -1,6 +1,10 @@
 spring:
   application:
     name: usermanagement
+
+  subservices:
+    mcp-management.url: http://gromokoso-mcpmanagement:8080
+
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -9,12 +13,49 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update   # nur für Entwicklung, in Prod lieber 'validate'
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect
     show-sql: true
     open-in-view: false
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9000/realms/gromokoso
+          jwk-set-uri: http://gromokoso-keycloak:8080/realms/gromokoso/protocol/openid-connect/certs
+
 server:
   port: 8080
+
+cors-allowed-origins: "http://localhost:8080"
+
+logging:
+  level:
+    de.thm.usermanagement: DEBUG
+    org.hibernate.sql: DEBUG
+---
+
+spring:
+  config:
+    activate.on-profile: dev
+cors-allowed-origins: "http://localhost:5173"
+---
+
+spring:
+  config:
+    activate.on-profile: prod
+
+  subservices:
+    mcp-management.url: https://zdh-swa-muenker.zdh.thm.de/gromokoso-mcpmanagement
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://zdh-swa-muenker.zdh.thm.de/keycloak/realms/swa2025
+          jwk-set-uri: https://zdh-swa-muenker.zdh.thm.de/keycloak/realms/swa2025/protocol/openid-connect/certs
+
+cors-allowed-origins: "https://zdh-swa-muenker.zdh.thm.de/gromokoso"

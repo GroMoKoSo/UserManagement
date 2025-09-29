@@ -34,11 +34,14 @@ public class McpManagementClient {
                     .header("Authorization", "Bearer " + tokenProvider.getToken())
                     .body(apiIds)
                     .retrieve();
-            logger.info("====== Ending notifying Mcp Management about changed tool set. Response: {} ======", response.toEntity(String.class).getStatusCode());
+            logger.info("====== Ending notifying Mcp Management about changed tool set. Response: {} ======",
+                    response.toEntity(String.class).getStatusCode());
         } catch (OAuth2AuthenticationException ae) {
-            logger.error("Ending notifying Mcp Management about changed tool set because of AUTHENTICATION ERROR: {}", ae.getMessage());
+            logger.error("Ending notifying Mcp Management about changed tool set because of AUTHENTICATION ERROR: {}",
+                    ae.getMessage());
         } catch (Exception e) {
-            logger.error("Ending notifying Mcp Management about changed tool set because of OTHER ERROR: {}", e.getMessage());
+            logger.error("Ending notifying Mcp Management about changed tool set because of OTHER ERROR: {}",
+                    e.getMessage());
         }
     }
 }

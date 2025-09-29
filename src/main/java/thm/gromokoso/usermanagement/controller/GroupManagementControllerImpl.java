@@ -7,10 +7,7 @@ import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.entity.EGroupRole;
 import thm.gromokoso.usermanagement.entity.EGroupType;
 import thm.gromokoso.usermanagement.entity.ESystemRole;
-import thm.gromokoso.usermanagement.exception.InvalidTokenException;
-import thm.gromokoso.usermanagement.exception.NotAuthorizedException;
-import thm.gromokoso.usermanagement.exception.ResourceNotFoundException;
-import thm.gromokoso.usermanagement.exception.ShouldBePutRequestException;
+import thm.gromokoso.usermanagement.exception.*;
 import thm.gromokoso.usermanagement.security.TokenProvider;
 import thm.gromokoso.usermanagement.service.GroupService;
 import thm.gromokoso.usermanagement.service.UserService;
@@ -259,6 +256,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group does not exist or user is not a Member!");
+        } catch (IllegalStateException ise) {
+            throw new LastAdminException("Cannot delete last admin in group!");
         }
     }
 
@@ -279,6 +278,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group does not exist or user is not a Member!");
+        } catch (IllegalStateException ise) {
+            throw new LastAdminException("Cannot delete last admin in group!");
         }
     }
 

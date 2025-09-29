@@ -110,7 +110,7 @@ public class UserManagementControllerImpl implements UserManagementController {
         } catch (NoSuchElementException nse) {
             throw new ResourceNotFoundException("There is no user with the name: " + username + "!");
         } catch (IllegalStateException ise) {
-            throw new LastSystemAdminException("Last admin in system cannot be deleted!");
+            throw new LastAdminException("Last admin in system cannot be deleted!");
         }
     }
 

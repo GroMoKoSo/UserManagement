@@ -180,6 +180,14 @@ public class GroupServiceImpl implements GroupService {
         UserToGroupId userToGroupId = new UserToGroupId(username, name);
         UserToGroup dbUserToGroup = userToGroupRepository.findById(userToGroupId).orElseThrow();
 
+        // Prevent that the last admin of a group is deleted
+        if (dbUserToGroup.getGroupRole() == EGroupRole.ADMIN &&
+                updateUserWithGroupRoleDto.groupRole() != EGroupRole.ADMIN &&
+                userToGroupRepository.countUserByGroupRole(name, EGroupRole.ADMIN) == 1) {
+            logger.warn("Cannot delete last Admin of group. Abort transaction...");
+            throw new IllegalStateException("Cannot delete last admin of group!");
+        }
+
         // Update Values
         logger.debug("Updating attributes of user within group: '{}'...", name);
         dbUserToGroup.setGroupRole(updateUserWithGroupRoleDto.groupRole());
@@ -197,7 +205,15 @@ public class GroupServiceImpl implements GroupService {
                                     String username) {
         logger.info("====== Starting delete user from group transaction ======");
         logger.debug("Try to fetch user to group relation with username: '{}' and group name '{}'", username, name);
-        userToGroupRepository.findById(new UserToGroupId(username, name)).orElseThrow();
+        UserToGroupId userToGroupId = new UserToGroupId(username, name);
+        UserToGroup dbUserToGroup = userToGroupRepository.findById(userToGroupId).orElseThrow();
+
+        // Prevent that the last admin of a group is deleted
+        if (dbUserToGroup.getGroupRole() == EGroupRole.ADMIN &&
+                userToGroupRepository.countUserByGroupRole(name, EGroupRole.ADMIN) == 1) {
+            logger.warn("Cannot delete last Admin of group. Abort transaction...");
+            throw new IllegalStateException("Cannot delete last admin of group!");
+        }
 
         // Delete User from Group
         userToGroupRepository.deleteByUserUserNameAndGroupGroupName(username, name);

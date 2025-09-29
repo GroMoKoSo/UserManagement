@@ -93,6 +93,11 @@ public class UserServiceImpl implements UserService {
                 userRepository.countUserBySystemRole(ESystemRole.ADMIN) > 1) {
             logger.debug("Also updating system role of user: '{}...'", username);
             dbUser.setSystemRole(updateUserDto.systemRole());
+        } else if (!canChangeSystemRole) {
+            logger.warn("Requester does not have permission to alter system roles of this user!");
+        } else if (updateUserDto.systemRole() == ESystemRole.MEMBER &&
+                userRepository.countUserBySystemRole(ESystemRole.ADMIN) == 1) {
+            logger.warn("Cannot alter the system role of the last admin in the system.");
         }
 
         // Save
@@ -113,8 +118,9 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteById(username);
             logger.info("====== Ending delete user transaction: SUCCESS ======");
         } else {
-            logger.error("Cannot delete the last Admin in the System!");
+            logger.error("Cannot delete the last admin in the system!");
             logger.info("====== Ending delete user transaction: FAILURE ======");
+            throw new IllegalStateException("Cannot delete the last Admin in the System");
         }
 
     }

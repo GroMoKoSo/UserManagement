@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.entity.ESystemRole;
 import thm.gromokoso.usermanagement.exception.InvalidTokenException;
+import thm.gromokoso.usermanagement.exception.LastSystemAdminException;
 import thm.gromokoso.usermanagement.exception.NotAuthorizedException;
 import thm.gromokoso.usermanagement.exception.ResourceNotFoundException;
 import thm.gromokoso.usermanagement.security.TokenProvider;
@@ -108,6 +109,8 @@ public class UserManagementControllerImpl implements UserManagementController {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
             throw new ResourceNotFoundException("There is no user with the name: " + username + "!");
+        } catch (IllegalStateException ise) {
+            throw new LastSystemAdminException("Last admin in system cannot be deleted!");
         }
     }
 

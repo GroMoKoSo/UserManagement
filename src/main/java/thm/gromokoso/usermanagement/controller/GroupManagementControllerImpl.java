@@ -126,7 +126,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             EGroupRole groupRole = getGroupRoleOfUser(name);
 
             // Check Permissions
-            if (groupRole == null && systemRole != ESystemRole.ADMIN) {
+            if (groupRole == null && systemRole != ESystemRole.ADMIN &&
+                    groupService.getGroupByGroupName(name).visibility() == EGroupType.PRIVATE) {
                 throw new NotAuthorizedException("You do not have permission to get information about this group!");
             }
             return groupService.fetchApiIdListFromGroup(name);
@@ -204,7 +205,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             EGroupRole groupRole = getGroupRoleOfUser(name);
 
             // Check Permissions
-            if (groupRole == null && systemRole != ESystemRole.ADMIN) {
+            if (groupRole == null && systemRole != ESystemRole.ADMIN &&
+                    groupService.getGroupByGroupName(name).visibility() == EGroupType.PRIVATE) {
                 throw new NotAuthorizedException("You do not have permission to get information about the users of this group!");
             }
             return groupService.fetchUserListFromGroup(name);

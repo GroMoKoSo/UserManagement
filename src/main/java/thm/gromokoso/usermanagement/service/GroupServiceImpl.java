@@ -1,5 +1,6 @@
 package thm.gromokoso.usermanagement.service;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,12 @@ public class GroupServiceImpl implements GroupService {
         if (!groupDto.name().matches("^[A-Za-z0-9-]+$")) {
             logger.error("Group name contains not allowed characters. Allowed are 'A-Z', 'a-z', '0-9' and '-'. Aborting Transaction...");
             throw new InvalidNameException("Group name contains illegal characters");
+        }
+
+        // Check if group already exists in database
+        if (groupRepository.findById(groupDto.name()).isPresent()) {
+            logger.error("Group already exists. Aborting Transaction...");
+            throw new EntityExistsException("Group already exists!");
         }
 
         logger.debug("Saving group to database.");
@@ -143,6 +150,12 @@ public class GroupServiceImpl implements GroupService {
         logger.debug("Try to fetch user with name: '{}'", userWithGroupRoleDto.username());
         User dbUser = userRepository.findById(userWithGroupRoleDto.username()).orElseThrow();
 
+        // Check if user already exists within group
+        if (userToGroupRepository.findById(new UserToGroupId(name, userWithGroupRoleDto.username())).isPresent()) {
+            logger.error("User already exists within group. Aborting Transaction...");
+            throw new EntityExistsException("User already exists within group!");
+        }
+
         // Create new Entity
         UserToGroup userToGroup = new UserToGroup(dbUser, dbGroup, userWithGroupRoleDto.groupRole());
 
@@ -202,6 +215,12 @@ public class GroupServiceImpl implements GroupService {
         logger.info("====== Starting add API ID to group transaction ======");
         logger.debug("Try to fetch group with name: '{}'", name);
         Group dbGroup = groupRepository.findById(name).orElseThrow();
+
+        // Check if api already exists in group
+        if (groupToApiRepository.findById(new GroupToApiId(groupToApiDto.apiId(), name)).isPresent()) {
+            logger.error("Api already exists within group. Aborting Transaction...");
+            throw new EntityExistsException("Api already exists within group!");
+        }
 
         // Create new Entity
         GroupToApi groupToApi = new GroupToApi(groupToApiDto.apiId(), dbGroup, groupToApiDto.active());

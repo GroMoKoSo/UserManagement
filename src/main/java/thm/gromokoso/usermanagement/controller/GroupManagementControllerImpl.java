@@ -1,5 +1,6 @@
 package thm.gromokoso.usermanagement.controller;
 
+import jakarta.persistence.EntityExistsException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import thm.gromokoso.usermanagement.dto.*;
@@ -8,6 +9,7 @@ import thm.gromokoso.usermanagement.entity.ESystemRole;
 import thm.gromokoso.usermanagement.exception.InvalidTokenException;
 import thm.gromokoso.usermanagement.exception.NotAuthorizedException;
 import thm.gromokoso.usermanagement.exception.ResourceNotFoundException;
+import thm.gromokoso.usermanagement.exception.ShouldBePutRequestException;
 import thm.gromokoso.usermanagement.security.TokenProvider;
 import thm.gromokoso.usermanagement.service.GroupService;
 import thm.gromokoso.usermanagement.service.UserService;
@@ -54,6 +56,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             return groupService.saveGroup(group);
         } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (EntityExistsException eee) {
+            throw new ShouldBePutRequestException("Group should be updated via PUT Request");
         }
     }
 
@@ -146,6 +150,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group not found!");
+        } catch (EntityExistsException eee) {
+            throw new ShouldBePutRequestException("Api of group should be updated via PUT Request");
         }
     }
 
@@ -222,6 +228,8 @@ public class GroupManagementControllerImpl implements GroupManagementController 
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException e) {
             throw new ResourceNotFoundException("Group not found!");
+        } catch (EntityExistsException eee) {
+            throw new ShouldBePutRequestException("User of group should be updated via PUT Request");
         }
     }
 
@@ -251,9 +259,10 @@ public class GroupManagementControllerImpl implements GroupManagementController 
         try {
             ESystemRole systemRole = getSystemRoleOfRequester();
             EGroupRole groupRole = getGroupRoleOfUser(name);
+            String tokenUsername = tokenProvider.getUsernameFromToken();
 
             // Check Permissions
-            if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN) {
+            if (groupRole != EGroupRole.ADMIN && systemRole != ESystemRole.ADMIN && !tokenUsername.equals(username)) {
                 throw new NotAuthorizedException("You do not have permission to delete users from this group!");
             }
             groupService.deleteUserFromGroup(name, username);

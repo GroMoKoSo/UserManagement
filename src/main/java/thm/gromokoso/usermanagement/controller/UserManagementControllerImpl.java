@@ -1,12 +1,10 @@
 package thm.gromokoso.usermanagement.controller;
 
+import jakarta.persistence.EntityExistsException;
 import org.springframework.web.bind.annotation.*;
 import thm.gromokoso.usermanagement.dto.*;
 import thm.gromokoso.usermanagement.entity.ESystemRole;
-import thm.gromokoso.usermanagement.exception.InvalidTokenException;
-import thm.gromokoso.usermanagement.exception.LastSystemAdminException;
-import thm.gromokoso.usermanagement.exception.NotAuthorizedException;
-import thm.gromokoso.usermanagement.exception.ResourceNotFoundException;
+import thm.gromokoso.usermanagement.exception.*;
 import thm.gromokoso.usermanagement.security.TokenProvider;
 import thm.gromokoso.usermanagement.service.UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -51,6 +49,8 @@ public class UserManagementControllerImpl implements UserManagementController {
             return userService.saveUser(userDto);
         } catch (OAuth2AuthenticationException ae) {
             throw new InvalidTokenException("The authentication token is invalid!");
+        } catch (EntityExistsException eee) {
+            throw new ShouldBePutRequestException("User should be updated via PUT Request");
         } catch (NoSuchElementException nse) {
             // User wants to register himself, he is registered in keycloak but not in Database
             return userService.saveUser(userDto);
@@ -149,6 +149,8 @@ public class UserManagementControllerImpl implements UserManagementController {
             throw new InvalidTokenException("The authentication token is invalid!");
         } catch (NoSuchElementException nse) {
             throw new ResourceNotFoundException("There is no user with the name: " + username + "!");
+        } catch (EntityExistsException eee) {
+            throw new ShouldBePutRequestException("Api of user should be updated via PUT Request");
         }
     }
 

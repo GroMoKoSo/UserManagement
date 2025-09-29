@@ -1,5 +1,6 @@
 package thm.gromokoso.usermanagement.service;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,12 @@ public class UserServiceImpl implements UserService {
         if (!userDto.userName().matches("^[A-Za-z0-9-]+$")) {
             logger.error("Username contains not allowed characters. Allowed are 'A-Z', 'a-z', '0-9' and '-'. Aborting Transaction...");
             throw new InvalidNameException("Username contains illegal characters");
+        }
+
+        // Check if user already exists in database
+        if (userRepository.findById(userDto.userName()).isPresent()) {
+            logger.error("User already exists. Aborting Transaction...");
+            throw new EntityExistsException("User already exists!");
         }
 
         logger.debug("Saving user to database.");
@@ -132,6 +139,12 @@ public class UserServiceImpl implements UserService {
         logger.info("====== Starting add API ID from user transaction ======");
         logger.debug("Try to fetch user with name: '{}'", username);
         User dbUser = userRepository.findById(username).orElseThrow();
+
+        // Check if user already has access to api in database
+        if (userToApiRepository.findById(new UserToApiId(userToApiIdDto.apiId(), username)).isPresent()) {
+            logger.error("User already has access to api. Aborting Transaction...");
+            throw new EntityExistsException("User already has access to api!");
+        }
 
         // Create Entity
         UserToApi userToApi = new UserToApi(userToApiIdDto.apiId(), dbUser, userToApiIdDto.active());

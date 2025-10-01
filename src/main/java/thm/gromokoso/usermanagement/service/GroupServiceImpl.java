@@ -48,8 +48,8 @@ public class GroupServiceImpl implements GroupService {
         logger.debug("Replacing whitespaces of group name with '-' characters.");
         Group dbGroup = new Group(groupDto.name().replace(" ", "-"), groupDto.description(), new ArrayList<>(), new ArrayList<>(), groupDto.visibility());
 
-        if (!groupDto.name().matches("^[A-Za-z0-9-]+$")) {
-            logger.error("Group name contains not allowed characters. Allowed are 'A-Z', 'a-z', '0-9' and '-'. Aborting Transaction...");
+        if (!dbGroup.getGroupName().matches("^[A-Za-z0-9-]+$")) {
+            logger.error("Group name contains not allowed characters. Allowed are 'A-Z', 'a-z', '0-9', '-' and ' '. Aborting Transaction...");
             throw new InvalidNameException("Group name contains illegal characters");
         }
 

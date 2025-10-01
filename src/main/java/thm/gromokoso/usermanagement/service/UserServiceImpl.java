@@ -42,8 +42,8 @@ public class UserServiceImpl implements UserService {
         logger.debug("Replacing whitespaces of username with '-' characters.");
         User dbUser = new User(userDto.userName().replace(" ", "-"), userDto.firstName(), userDto.lastName(), userDto.email(), new ArrayList<>(), new ArrayList<>(), ESystemRole.MEMBER);
 
-        if (!userDto.userName().matches("^[A-Za-z0-9-]+$")) {
-            logger.error("Username contains not allowed characters. Allowed are 'A-Z', 'a-z', '0-9' and '-'. Aborting Transaction...");
+        if (!dbUser.getUserName().matches("^[A-Za-z0-9-]+$")) {
+            logger.error("Username contains not allowed characters. Allowed are 'A-Z', 'a-z', '0-9', '-' and ' '. Aborting Transaction...");
             throw new InvalidNameException("Username contains illegal characters");
         }
 

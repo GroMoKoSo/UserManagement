@@ -46,6 +46,12 @@ public interface UserService {
     void deleteUserByUserName(String username);
 
     /**
+     * Returns all saved API ID's from all users within the user management.
+     * @return List of all saved Users.
+     */
+    List<UserToApiDto> fetchAllApisList();
+
+    /**
      * Saves the given API ID to the User data which grants the User access to the corresponding tool.
      * @param username Unique identifier of the user data.
      * @param userToApiIdDto Dataset of the API which should be updated from the User including ID and whether its active.

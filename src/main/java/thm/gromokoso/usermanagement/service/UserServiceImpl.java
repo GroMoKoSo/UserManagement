@@ -134,6 +134,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public List<UserToApiDto> fetchAllApisList() {
+        logger.info("====== Starting to fetch all apis from every user ======");
+        List<UserToApiDto> allUserToApisDtoList = new ArrayList<>();
+        for (User user : userRepository.findAll()) {
+            logger.debug("Fetch API access of user '{}'", user.getUserName());
+            for (UserToApi userToApi : userRepository.findByIdWithApis(user.getUserName()).orElseThrow().getApiAccesses()) {
+                logger.debug("Add API with ID '{}'", userToApi.getId().getApiId());
+                allUserToApisDtoList.add(new UserToApiDto(userToApi.getId().getApiId(), "user", userToApi.isActive()));
+            }
+        }
+        for (Group group : groupRepository.findAll()) {
+            logger.debug("fetch API access of group '{}'", group.getGroupName());
+            for (GroupToApi groupToApi : groupRepository.findByIdWithApis(group.getGroupName()).orElseThrow().getApiAccesses()) {
+                logger.debug("Add API with ID '{}'", groupToApi.getId().getApiId());
+                allUserToApisDtoList.add(new UserToApiDto(groupToApi.getId().getApiId(), group.getGroupName(), groupToApi.isActive()));
+            }
+        }
+        logger.info("====== Ending to fetch all apis from every user: SUCCESS ======");
+        return allUserToApisDtoList;
+    }
+
+    @Override
+    @Transactional
     public UserToApiDto addApiToUser(String username, UserToApiDto userToApiIdDto) {
         // Get Database References
         logger.info("====== Starting add API ID from user transaction ======");

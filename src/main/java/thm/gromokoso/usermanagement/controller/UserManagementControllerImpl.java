@@ -115,8 +115,23 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public List<UserToApiDto> getApis(@PathVariable String username,
-                                      @RequestParam(required = false, defaultValue = "true") boolean accessViaGroup) {
+    public List<UserToApiDto> getAllApis() {
+        try {
+            String tokenUsername = tokenProvider.getUsernameFromToken();
+            UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
+
+            if (tokenUser.systemRole() != ESystemRole.ADMIN) {
+                throw new NotAuthorizedException("You do not have permission to request all APIs!");
+            }
+            return userService.fetchAllApisList();
+        } catch (OAuth2AuthenticationException ae) {
+            throw new InvalidTokenException("The authentication token is invalid!");
+        }
+    }
+
+    @Override
+    public List<UserToApiDto> getApisFromUser(@PathVariable String username,
+                                              @RequestParam(required = false, defaultValue = "true") boolean accessViaGroup) {
         try {
             String tokenUsername = tokenProvider.getUsernameFromToken();
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
@@ -134,8 +149,8 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public UserToApiDto addApis(@PathVariable String username,
-                                @RequestBody UserToApiDto userToApiDto) {
+    public UserToApiDto addApisToUser(@PathVariable String username,
+                                      @RequestBody UserToApiDto userToApiDto) {
         try {
             String tokenUsername = tokenProvider.getUsernameFromToken();
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
@@ -155,9 +170,9 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public UserToApiDto updateApi(@PathVariable String username,
-                                  @PathVariable Integer api_id,
-                                  @RequestBody UpdateUserToApiDto userToApiDto) {
+    public UserToApiDto updateApiFromUser(@PathVariable String username,
+                                          @PathVariable Integer api_id,
+                                          @RequestBody UpdateUserToApiDto userToApiDto) {
         try {
             String tokenUsername = tokenProvider.getUsernameFromToken();
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);
@@ -175,8 +190,8 @@ public class UserManagementControllerImpl implements UserManagementController {
     }
 
     @Override
-    public void deleteApi(@PathVariable String username,
-                          @PathVariable Integer api_id) {
+    public void deleteApiFromUser(@PathVariable String username,
+                                  @PathVariable Integer api_id) {
         try {
             String tokenUsername = tokenProvider.getUsernameFromToken();
             UserWithSystemRoleDto tokenUser = userService.findUserByUserName(tokenUsername);

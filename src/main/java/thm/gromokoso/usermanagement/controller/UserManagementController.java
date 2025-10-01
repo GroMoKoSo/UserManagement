@@ -72,6 +72,16 @@ public interface UserManagementController {
     void deleteUser(@PathVariable String username);
 
     @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully returned all apis",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = UserToApiDto.class)))}),
+            @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
+                    content = @Content)}
+    )
+    @GetMapping("/users/api")
+    List<UserToApiDto> getAllApis();
+
+    @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "API ID's of User successfully returned.",
                     content = { @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = UserToApiDto.class)))}),
@@ -81,7 +91,7 @@ public interface UserManagementController {
                     content = @Content)}
     )
     @GetMapping("/users/{username}/apis")
-    List<UserToApiDto> getApis(@PathVariable String username, @RequestParam boolean accessByGroups);
+    List<UserToApiDto> getApisFromUser(@PathVariable String username, @RequestParam boolean accessByGroups);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "API ID for User successfully added.",
@@ -93,7 +103,7 @@ public interface UserManagementController {
                     content = @Content)}
     )
     @PostMapping("/users/{username}/apis")
-    UserToApiDto addApis(@PathVariable String username, @RequestBody UserToApiDto userToApiDto);
+    UserToApiDto addApisToUser(@PathVariable String username, @RequestBody UserToApiDto userToApiDto);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "API ID for User successfully updated.",
@@ -105,7 +115,7 @@ public interface UserManagementController {
                     content = @Content)}
     )
     @PutMapping("users/{username}/apis/{api_id}")
-    UserToApiDto updateApi(@PathVariable String username,
+    UserToApiDto updateApiFromUser(@PathVariable String username,
                            @PathVariable Integer api_id,
                            @RequestBody UpdateUserToApiDto userToApiDto);
 
@@ -117,7 +127,7 @@ public interface UserManagementController {
                     content = @Content)}
     )
     @DeleteMapping("/users/{username}/apis/{api_id}")
-    void deleteApi(@PathVariable String username,
+    void deleteApiFromUser(@PathVariable String username,
                    @PathVariable Integer api_id);
 
     @ApiResponses(value = {

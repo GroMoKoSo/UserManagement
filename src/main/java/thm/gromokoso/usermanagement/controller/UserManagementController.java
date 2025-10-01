@@ -78,7 +78,7 @@ public interface UserManagementController {
             @ApiResponse(responseCode = "401", description = "Not authorized to perform this request.",
                     content = @Content)}
     )
-    @GetMapping("/users/api")
+    @GetMapping("/users/apis")
     List<UserToApiDto> getAllApis();
 
     @ApiResponses(value = {
